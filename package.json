@@ -1,5 +1,5 @@
 {
-  "name": "p2p_service",
+  "name": "p2p_wallet_service",
   "version": "1.0.0",
   "description": "",
   "main": "dist/app.js",
