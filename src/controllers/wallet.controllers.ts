@@ -1,0 +1,67 @@
+import { Request, Response } from "express";
+import walletService from "../services/wallet.service";
+
+
+const sendCode = async (req: Request, res: Response) => {
+  try {
+    const {email} = req.body;
+    res.send({
+      data: await walletService.sendCode(email)
+    });
+  } catch (error: any) {
+    console.log(error)
+    let statusCode = error.message.split("-").length > 0 ? Number(error.message.split("-")[0]) ? Number(error.message.split("-")[0]) : 500 : 500;
+    res.status(statusCode).send(error.message);
+  }
+};
+
+const verifyCode = async (req: Request, res: Response) => {
+  try {
+    const {code, email} = req.body;
+    res.send({
+      data: await walletService.verifyCode(code, email)
+    });
+  } catch (error: any) {
+    console.log(error)
+    let statusCode = error.message.split("-").length > 0 ? Number(error.message.split("-")[0]) ? Number(error.message.split("-")[0]) : 500 : 500;
+    res.status(statusCode).send(error.message);
+  }
+};
+
+
+const verifyGoogle = async (req: Request, res: Response) => {
+  try {
+    const {token} = req.body;
+    res.send({
+      data: await walletService.verifyGoogle(token)
+    });
+  } catch (error: any) {
+    console.log(error)
+    let statusCode = error.message.split("-").length > 0 ? Number(error.message.split("-")[0]) ? Number(error.message.split("-")[0]) : 500 : 500;
+    res.status(statusCode).send(error.message);
+  }
+};
+
+
+export default { sendCode, verifyCode, verifyGoogle }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
