@@ -9,16 +9,9 @@ import swaggerUi, { serve } from "swagger-ui-express";
 import swaggerSetup from "./config/swagger";
 import AppDataSource from "./config/data.source";
 import "reflect-metadata";
-
-//inicializando firebase
-/*const { getFirestore } = require('firebase-admin/firestore');
-var admin = require("firebase-admin");
-var serviceAccount = require("../firebase-key");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-export const dbFire = getFirestore();*/
+import * as http from "http";
+import * as https from "https";
+const fs = require("fs");
 
 //inicializando el resto de express
 dotenv.config();
@@ -44,9 +37,25 @@ app.use(express.json());
 app.use(process.env.RUTA!, router);
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSetup));
 
+// credenciales ssl
+let server
+if (process.env.NODE_ENV === "production") {
+  const privateKey = fs.readFileSync("/etc/letsencrypt/live/musicfeast.io/privkey.pem", "utf8");
+  const certificate = fs.readFileSync("/etc/letsencrypt/live/musicfeast.io/cert.pem", "utf8");
+  const ca = fs.readFileSync("/etc/letsencrypt/live/musicfeast.io/chain.pem", "utf8");
 
+  const credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca: ca,
+  };
+  server = https.createServer(credentials, app);
+  console.log("htpps");
+} else {
+  server = http.createServer(app);
+  console.log("htpp");
+}
 
-
-app.listen(port, () => {
+server.listen(port, () => {
   return console.log(`server is listening on ${port} - ${process.env.PROTOCOL}${process.env.HOST}:${process.env.PORT}${process.env.RUTA}/`);
 });
