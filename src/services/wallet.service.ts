@@ -256,7 +256,7 @@ async function parseFromSeedPhrase(seedPhrase: string) {
       address: implicitAccountId,
       isExists: true,
     };
-    console.log(result)
+
     return result;
 }
 
