@@ -29,8 +29,9 @@ export class Wallet extends BaseEntity {
 
   @Column({
     nullable: false,
+    default: false
   })
-  name!: string;
+  nickname!: boolean;
 
   @CreateDateColumn({type: "timestamptz"})
   creation_date!: Date;

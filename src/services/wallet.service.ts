@@ -7,7 +7,8 @@ import { Wallet } from "../entities/wallets.entity";
 import { OtpList } from "../entities/otp.entity";
 const nearSeedPhrase = require('near-seed-phrase');
 const nearAPI = require("near-api-js");
-const { utils, AccountService, NearUtils, KeyPair, keyStores, Near } = nearAPI;
+const { utils, AccountService, NearUtils, KeyPair, keyStores, Near, connect } = nearAPI;
+import {configNear} from '../config/nearConfig';
 const otpGenerator = require('otp-generator')
 
 const {OAuth2Client} = require('google-auth-library');
@@ -64,10 +65,8 @@ const verifyCode = async (code: string, email: string) => {
     if(minutosDiff > Number(process.env.TIME_ESPIRATE_SECOND)) {
       throw new Error ("Su codigo ha caducado, solicite un nuevo codigo");
     }
-
-    const result = await emailRegistered(email)
     
-    return result
+    return true
 
   } else {
     throw new Error ("El codigo no coincide")
@@ -90,6 +89,92 @@ const verifyGoogle = async (token: string) => {
 }
 
 
+async function emailWalletImport(code: string, email: string) {
+  await verifyCode(code, email)
+  
+  const response = await emailRegistered(email)
+
+  return response
+  
+}
+
+
+async function emailCreateNickname(code: string, email: string, nickname: string) {
+  try {
+    await verifyCode(code, email)
+
+    const wallet = await Wallet.findOneBy({email: email});
+    
+    if(!wallet) {
+      throw new Error ("Email is not registered")
+    } else {
+      const response = await createNickname(nickname);
+      await Wallet.update({email:email}, {seedPhrase: response.seedPhrase, nickname: true})
+      response.isExists = true;
+
+      return response
+    }
+  } catch (err:any) {
+    throw new Error (err.toString())
+  }
+
+}
+
+
+
+async function createNickname(nickname: string) {
+    
+  const privateKey = process.env.CREATE_NICKNAME_PRIVATEKEY;
+  const address =  process.env.CREATE_NICKNAME_ADDRESS;
+  
+
+  // creates a public / private key pair using the provided private key
+  // adds the keyPair you created to keyStore
+  const myKeyStore = new keyStores.InMemoryKeyStore();
+  const keyPairOld = KeyPair.fromString(privateKey);
+  await myKeyStore.setKey(process.env.NETWORK, address, keyPairOld);
+
+  const nearConnection = await connect(configNear(myKeyStore));
+  const account = await nearConnection.account(address);
+  
+  
+  // const creatorAccount = await nearConnection.account(address);
+  const {seedPhrase, secretKey} = nearSeedPhrase.generateSeedPhrase();
+  const keyPairNew = KeyPair.fromString(secretKey);;// KeyPair.fromRandom("ed25519");
+  const publicKey = keyPairNew.publicKey.toString();
+  await myKeyStore.setKey(process.env.NETWORK, nickname, keyPairNew);
+
+
+  const response2 = await account.functionCall({
+    contractId: process.env.NETWORK,
+    methodName: "create_account",
+    args: {
+      new_account_id: nickname,
+      new_public_key: publicKey,
+    },
+    gas: "300000000000000",
+    attachedDeposit: "10000000000000000000",
+  });
+
+  if(response2.receipts_outcome[1].outcome.status.Failure === undefined) {
+    const result: any = {
+      seedPhrase: seedPhrase, 
+      publicKey: publicKey, 
+      secretKey: keyPairNew.secretKey,
+      address: nickname,
+      isExists: true,
+    };
+  
+    return result;
+
+  } else {
+    throw new Error ("Error: " + response2.receipts_outcome[1].outcome.status.Failure.toString())
+  }
+}
+
+
+
+
 
 async function emailRegistered(email: string) {
   const wallet = await Wallet.findOneBy({email: email});
@@ -98,7 +183,6 @@ async function emailRegistered(email: string) {
 
     const createWallet = new Wallet();
     createWallet.email = email
-    createWallet.name = email.split("@")[0]
     createWallet.seedPhrase = dataWallet.seedPhrase
     
     const save = await createWallet.save();
@@ -153,9 +237,17 @@ async function generateSeedPhrase() {
 
 async function parseFromSeedPhrase(seedPhrase: string) {
     const walletSeed = await nearSeedPhrase.parseSeedPhrase(seedPhrase);
-    const keyPair = KeyPair.fromString(walletSeed.secretKey);
-    const publicKey = keyPair.getPublicKey(); // keyPair.publicKey.toString();
-    const implicitAccountId = Buffer.from(keyPair.getPublicKey().data).toString("hex");
+    const keyPairNew = KeyPair.fromString(walletSeed.secretKey);
+    const publicKey = keyPairNew.publicKey.toString();
+    let implicitAccountId = Buffer.from(publicKey).toString("hex");
+    
+    await axios.get(process.env.URL_API_INDEXER + "/publicKey/" + publicKey +'/accounts')
+      .then((response) => {
+
+        if(response.data.length > 0) {
+          implicitAccountId = response.data[0].toString()
+        }
+    })
 
     const result: any = {
       seedPhrase: seedPhrase, 
@@ -164,7 +256,7 @@ async function parseFromSeedPhrase(seedPhrase: string) {
       address: implicitAccountId,
       isExists: true,
     };
-
+    console.log(result)
     return result;
 }
 
@@ -190,5 +282,8 @@ async function isAddress(address: string): Promise<boolean> {
 export default {
   sendCode,
   verifyCode,
+  emailWalletImport,
+  emailCreateNickname,
+  createNickname,
   verifyGoogle
 }

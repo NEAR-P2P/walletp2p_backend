@@ -63,6 +63,99 @@ router.post('/verify-code', walletController.verifyCode)
 /**
  * Post track
  * @swagger
+ * /wallet/email-wallet-import:
+ *    post:
+ *      tags:
+ *        - User
+ *      summary: .
+ *      description: .
+ *      requestBody:
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: "object"
+ *                required: [userid]
+ *                properties: {
+ *                  seedPhrase: {
+ *                    type: "string"
+ *                  }
+ *                }
+ *      responses:
+ *        '200':
+ *          description: .
+ *        '400':
+ *          description: .
+ *        '500':
+ *          description: server internal error.
+ */
+router.post('/email-wallet-import', walletController.emailWalletImport)
+
+
+/**
+ * Post track
+ * @swagger
+ * /wallet/email-create-nickname:
+ *    post:
+ *      tags:
+ *        - User
+ *      summary: .
+ *      description: .
+ *      requestBody:
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: "object"
+ *                required: [userid]
+ *                properties: {
+ *                  seedPhrase: {
+ *                    type: "string"
+ *                  }
+ *                }
+ *      responses:
+ *        '200':
+ *          description: .
+ *        '400':
+ *          description: .
+ *        '500':
+ *          description: server internal error.
+ */
+router.post('/email-create-nickname', walletController.emailCreateNickname)
+
+
+/**
+ * Post track
+ * @swagger
+ * /wallet/create-nickname:
+ *    post:
+ *      tags:
+ *        - User
+ *      summary: .
+ *      description: .
+ *      requestBody:
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: "object"
+ *                required: [userid]
+ *                properties: {
+ *                  seedPhrase: {
+ *                    type: "string"
+ *                  }
+ *                }
+ *      responses:
+ *        '200':
+ *          description: .
+ *        '400':
+ *          description: .
+ *        '500':
+ *          description: server internal error.
+ */
+router.post('/create-nickname', walletController.createNickname)
+
+
+/**
+ * Post track
+ * @swagger
  * /wallet/verify-google:
  *    post:
  *      tags:
