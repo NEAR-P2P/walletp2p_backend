@@ -4,7 +4,7 @@
 
 
 export function configNear(keyStores:any) {
-  const network = process.env.Network
+  const network = process.env.NETWORK
   const enviroment = false
   const NETWORK = (enviroment) ? network : network;
   switch (NETWORK) {
