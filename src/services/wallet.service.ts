@@ -239,7 +239,8 @@ async function parseFromSeedPhrase(seedPhrase: string) {
     const walletSeed = await nearSeedPhrase.parseSeedPhrase(seedPhrase);
     const keyPairNew = KeyPair.fromString(walletSeed.secretKey);
     const publicKey = keyPairNew.publicKey.toString();
-    let implicitAccountId = Buffer.from(publicKey).toString("hex");
+    let implicitAccountId = Buffer.from(keyPairNew.getPublicKey().data).toString("hex");
+    //let address = Buffer.from().toString("hex");
     
     await axios.get(process.env.URL_API_INDEXER + "/publicKey/" + publicKey +'/accounts')
       .then((response) => {
