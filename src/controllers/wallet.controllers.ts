@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
-import walletService from "../services/wallet.service";
+import WalletService from "../services/wallet.service";
 
+const service = new WalletService();
 
 const sendCode = async (req: Request, res: Response) => {
   try {
     const {email} = req.body;
     res.send({
-      data: await walletService.sendCode(email)
+      data: await service.sendCode(email)
     });
   } catch (error: any) {
     console.log(error)
@@ -19,7 +20,7 @@ const verifyCode = async (req: Request, res: Response) => {
   try {
     const {code, email} = req.body;
     res.send({
-      data: await walletService.verifyCode(code, email)
+      data: await service.verifyCode(code, email)
     });
   } catch (error: any) {
     console.log(error)
@@ -32,7 +33,7 @@ const emailWalletImport = async (req: Request, res: Response) => {
   try {
     const {code, email, seedPhraseNicname} = req.body;
     res.send({
-      data: await walletService.emailWalletImport(code, email)
+      data: await service.emailWalletImport(code, email)
     });
   } catch (error: any) {
     console.log(error)
@@ -46,7 +47,7 @@ const emailCreateNickname = async (req: Request, res: Response) => {
   try {
     const {code, email, nickname} = req.body;
     res.send({
-      data: await walletService.emailCreateNickname(code, email, nickname)
+      data: await service.emailCreateNickname(code, email, nickname)
     });
   } catch (error: any) {
     console.log(error)
@@ -59,7 +60,7 @@ const createNickname = async (req: Request, res: Response) => {
   try {
     const {nickname} = req.body;
     res.send({
-      data: await walletService.createNickname(nickname)
+      data: await service.createNickname(nickname)
     });
   } catch (error: any) {
     console.log(error)
@@ -73,7 +74,7 @@ const verifyGoogle = async (req: Request, res: Response) => {
   try {
     const {token} = req.body;
     res.send({
-      data: await walletService.verifyGoogle(token)
+      data: await service.verifyGoogle(token)
     });
   } catch (error: any) {
     console.log(error)

@@ -1,44 +1,26 @@
-import { Account } from "near-api-js";
+const nearAPI = require("near-api-js");
+const { utils, AccountService, NearUtils, KeyPair, keyStores, Near, connect } = nearAPI;
 
 
-const NETWORK = process.env.NETWORK || "testnet";
 
-let NEAR: string;
-if (process.env.NEAR_ENV === "testnet") {
-  NEAR = "testnet";
-} else {
-  NEAR = "near";
+async function isAddress(address: string): Promise<boolean> {
+  const keyStore = new keyStores.InMemoryKeyStore();
+  const near = new Near(NearUtils.ConfigNEAR(keyStore));
+  const account = new AccountService(near.connection, address);
+  const is_address = await account
+    .state()
+    .then((response: any) => {
+      console.log(response);
+      return true;
+    })
+    .catch((error: any) => {
+      console.log(error);
+      return false;
+    });
+  return is_address;
 }
 
-export class AccountService extends Account {
-  public async signAndSendTrx(trx: any) {
-    return await this.signAndSendTransaction(trx);
-  }
-}
 
-export class NearUtils {
-  static ConfigNEAR(keyStores: any) {
-    switch (NETWORK) {
-      case "mainnet":
-        return {
-          networkId: "mainnet",
-          nodeUrl: "https://rpc.mainnet.near.org",
-          keyStore: keyStores,
-          walletUrl: "https://wallet.near.org",
-          helperUrl: "https://helper.mainnet.near.org",
-          explorerUrl: "https://explorer.mainnet.near.org",
-        };
-      case "testnet":
-        return {
-          networkId: "testnet",
-          keyStore: keyStores,
-          nodeUrl: "https://rpc.testnet.near.org",
-          walletUrl: "https://wallet.testnet.near.org",
-          helperUrl: "https://helper.testnet.near.org",
-          explorerUrl: "https://explorer.testnet.near.org",
-        };
-      default:
-        throw new Error(`Unconfigured environment '${NETWORK}'`);
-    }
-  }
+export default {
+  isAddress
 }
