@@ -27,7 +27,7 @@ const sendCode = async (email:string) => {
 
   await transporter.sendMail({
     from: '"verificación 👻" <hpalencia@dvconsultores.com>', // sender address
-    to: "hrpmicarelli@gmail.com", // list of receivers
+    to: email, // list of receivers
     subject: "Codigo de verificación Hello ✔", // Subject line
     text: "Codigo de verificación", // plain text body
     html: "<p>Su codigo es: <b>"+otp+"</b> </p>", // html body
