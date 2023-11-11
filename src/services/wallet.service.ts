@@ -2,9 +2,13 @@ import { Wallet } from "../entities/wallets.entity";
 import GoogleAuthUtils from "../utils/google_auth.utils";
 import walletUtils from "../utils/wallet.utils";
 import emailUtils from "../utils/email.utils";
+import encryp from "../utils/encryp";
 
 
-
+let textEncryp = encryp.encryp("este texto se encryptara");
+  console.log(textEncryp);
+  let testDcryp = encryp.decryp(textEncryp);
+  console.log(testDcryp);
 
  //funcion de delay
  /* function delay(ms: number) {
@@ -60,7 +64,7 @@ class WalletService {
         throw new Error ("Email is not registered")
       } else {
         const response = await walletUtils.createNickname(nickname);
-        await Wallet.update({email:email}, {seedPhrase: response.seedPhrase, nickname: true})
+        await Wallet.update({email:email}, {seedPhrase: encryp.encryp(response.seedPhrase), nickname: true})
         response.isExists = true;
 
         return response

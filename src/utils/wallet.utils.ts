@@ -3,6 +3,7 @@ const nearAPI = require("near-api-js");
 const { utils, AccountService, NearUtils, KeyPair, keyStores, Near, connect } = nearAPI;
 import {configNear} from '../config/nearConfig';
 import { Wallet } from "../entities/wallets.entity";
+import encryp from "./encryp";
 const nearSeedPhrase = require('near-seed-phrase');
 
 
@@ -13,8 +14,8 @@ async function emailRegistered(email: string) {
     const dataWallet = await generateSeedPhrase()
 
     const createWallet = new Wallet();
-    createWallet.email = email
-    createWallet.seedPhrase = dataWallet.seedPhrase
+    createWallet.email = email;
+    createWallet.seedPhrase = encryp.encryp(dataWallet.seedPhrase);
     
     const save = await createWallet.save();
 
@@ -22,7 +23,7 @@ async function emailRegistered(email: string) {
   
     return dataWallet
   } else {
-    const dataWallet = await parseFromSeedPhrase(wallet.seedPhrase)
+    const dataWallet = await parseFromSeedPhrase(encryp.decryp(wallet.seedPhrase));
     return dataWallet
   }
 }
