@@ -93,16 +93,15 @@ async function createNickname(nickname: string) {
   const nearConnection = await connect(configNear(myKeyStore));
   const account = await nearConnection.account(address);
   
-  
   // const creatorAccount = await nearConnection.account(address);
   const {seedPhrase, secretKey} = nearSeedPhrase.generateSeedPhrase();
   const keyPairNew = KeyPair.fromString(secretKey);;// KeyPair.fromRandom("ed25519");
   const publicKey = keyPairNew.publicKey.toString();
   await myKeyStore.setKey(process.env.NETWORK, nickname, keyPairNew);
 
-
+  
   const response2 = await account.functionCall({
-    contractId: process.env.NETWORK,
+    contractId: process.env.NETWORK == "testnet" ? process.env.NETWORK : "near",
     methodName: "create_account",
     args: {
       new_account_id: nickname,
@@ -111,7 +110,7 @@ async function createNickname(nickname: string) {
     gas: "300000000000000",
     attachedDeposit: "10000000000000000000",
   });
-
+  
   if(response2.receipts_outcome[1].outcome.status.Failure === undefined) {
     const result: any = {
       seedPhrase: seedPhrase, 
