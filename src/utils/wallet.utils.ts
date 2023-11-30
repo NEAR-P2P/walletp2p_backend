@@ -9,7 +9,7 @@ const nearSeedPhrase = require('near-seed-phrase');
 
 
 async function emailRegistered(email: string) {
-  const wallet = await Wallet.findOneBy({email: email});
+  const wallet = await Wallet.findOneBy({email: email.trim()});
   if(!wallet) {
     const dataWallet = await generateSeedPhrase()
 

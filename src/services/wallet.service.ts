@@ -4,12 +4,12 @@ import walletUtils from "../utils/wallet.utils";
 import emailUtils from "../utils/email.utils";
 import encryp from "../utils/encryp";
 
-
+/*
 let textEncryp = encryp.encryp("este texto se encryptara");
   console.log(textEncryp);
   let testDcryp = encryp.decryp(textEncryp);
   console.log(testDcryp);
-
+*/
  //funcion de delay
  /* function delay(ms: number) {
   return new Promise( resolve => setTimeout(resolve, ms) );
