@@ -10,7 +10,7 @@ const nearSeedPhrase = require('near-seed-phrase');
 
 async function emailRegistered(email: string) {
   const wallet = await Wallet.findOneBy({email: email.trim()});
-  if(!wallet) {
+  if(!wallet) throw new Error("Correo no registrado") /* {
     const dataWallet = await generateSeedPhrase()
 
     const createWallet = new Wallet();
@@ -22,10 +22,10 @@ async function emailRegistered(email: string) {
     if(!save) throw new Error ("Error al registrar su correo")
   
     return dataWallet
-  } else {
-    const dataWallet = await parseFromSeedPhrase(encryp.decryp(wallet.seedPhrase));
-    return dataWallet
-  }
+  } else { */
+  const dataWallet = await parseFromSeedPhrase(encryp.decryp(wallet.seedPhrase));
+  return dataWallet
+  //}
 }
 
 

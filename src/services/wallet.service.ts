@@ -68,9 +68,9 @@ class WalletService {
   async emailWalletImport(code: string, email: string) {
     await this.verifyCode(code, email)
     
-    const response = "funcion deprecada"
+    //const response = "funcion deprecada"
 
-    // const response = await walletUtils.emailRegistered(email)
+    const response = await walletUtils.emailRegistered(email)
 
     return response
     
