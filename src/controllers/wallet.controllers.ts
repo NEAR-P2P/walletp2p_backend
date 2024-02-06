@@ -16,6 +16,19 @@ const sendCode = async (req: Request, res: Response) => {
   }
 };
 
+const sendCodeVerifyEmail = async (req: Request, res: Response) => {
+  try {
+    const {email} = req.body;
+    res.send({
+      data: await service.sendCodeVerifyEmail(email)
+    });
+  } catch (error: any) {
+    console.log(error)
+    let statusCode = error.message.split("-").length > 0 ? Number(error.message.split("-")[0]) ? Number(error.message.split("-")[0]) : 500 : 500;
+    res.status(statusCode).send(error.message || error);
+  }
+};
+
 const verifyCode = async (req: Request, res: Response) => {
   try {
     const {code, email} = req.body;
@@ -84,7 +97,7 @@ const verifyGoogle = async (req: Request, res: Response) => {
 };
 
 
-export default { sendCode, verifyCode, emailWalletImport, emailCreateNickname, createNickname, verifyGoogle }
+export default { sendCode, sendCodeVerifyEmail, verifyCode, emailWalletImport, emailCreateNickname, createNickname, verifyGoogle }
 
 
 

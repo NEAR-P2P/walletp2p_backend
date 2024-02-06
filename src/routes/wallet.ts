@@ -29,6 +29,8 @@ import walletController from '../controllers/wallet.controllers';
  */
 router.post('/send-code', walletController.sendCode)
 
+
+router.post('/send-code-verify-email', walletController.sendCodeVerifyEmail)
 /**
  * Post track
  * @swagger
@@ -58,6 +60,8 @@ router.post('/send-code', walletController.sendCode)
  *          description: server internal error.
  */
 router.post('/verify-code', walletController.verifyCode)
+
+
 
 
 /**

@@ -9,11 +9,11 @@ const sendCode = async (email:string) => {
   const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
   let userRegister = false
 
-  await Wallet.findOneBy({email: email }).then((response) => {
+  await Wallet.findOneBy({email: email }).then(() => {
     userRegister = true;
   })
   
-  await OtpList.findOne({where: {email: email }}).then((response) => {
+  await OtpList.findOne({where: {email: email }}).then(() => {
     OtpList.delete({email: email});
   })
 

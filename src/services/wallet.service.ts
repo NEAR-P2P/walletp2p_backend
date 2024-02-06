@@ -14,6 +14,9 @@ let textEncryp = encryp.encryp("este texto se encryptara");
  /* function delay(ms: number) {
   return new Promise( resolve => setTimeout(resolve, ms) );
 } */
+
+
+
 class WalletService {
 
   async sendCode(email:string) {
@@ -22,6 +25,18 @@ class WalletService {
     return result
   }
 
+  async sendCodeVerifyEmail(email:string) {
+    const verifyEmail = await Wallet.findOne({where: {email: email}});
+
+    if(verifyEmail) {
+      throw new Error("El correo proporcionado ya esta registrado, use un correo diferente")
+    }
+
+    const result = await emailUtils.sendCode(email)
+
+    return result
+  }
+  
 
   async verifyCode(code: string, email: string) {
     const result = await emailUtils.verifyCode(code, email)
