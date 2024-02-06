@@ -44,7 +44,7 @@ const verifyCode = async (req: Request, res: Response) => {
 
 const emailWalletImport = async (req: Request, res: Response) => {
   try {
-    const {code, email, seedPhraseNicname} = req.body;
+    const {code, email} = req.body;
     res.send({
       data: await service.emailWalletImport(code, email)
     });
