@@ -125,7 +125,6 @@ async function createNickname(nickname: string, email: string, cedula: string) {
       createWallet.email = email;
       createWallet.seedPhrase = encryp.encryp(seedPhrase);
       createWallet.cedula = cedula;
-      createWallet.nft = true;
       
       await createWallet.save();
     } catch (error) {
