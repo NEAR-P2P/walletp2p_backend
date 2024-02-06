@@ -71,9 +71,9 @@ const emailCreateNickname = async (req: Request, res: Response) => {
 
 const createNickname = async (req: Request, res: Response) => {
   try {
-    const {nickname} = req.body;
+    const {nickname, email, cedula} = req.body;
     res.send({
-      data: await service.createNickname(nickname)
+      data: await service.createNickname(nickname, email, cedula)
     });
   } catch (error: any) {
     console.log(error)

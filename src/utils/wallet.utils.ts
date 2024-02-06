@@ -75,7 +75,7 @@ async function parseFromSeedPhrase(seedPhrase: string) {
 }
 
 
-async function createNickname(nickname: string) {
+async function createNickname(nickname: string, email: string, cedula: string) {
     
   const privateKey = process.env.CREATE_NICKNAME_PRIVATEKEY;
   const address =  process.env.CREATE_NICKNAME_ADDRESS;
@@ -119,6 +119,18 @@ async function createNickname(nickname: string) {
       address: nickname,
       isExists: true,
     };
+
+    try {
+      const createWallet = new Wallet();
+      createWallet.email = email;
+      createWallet.seedPhrase = encryp.encryp(seedPhrase);
+      createWallet.cedula = cedula;
+      createWallet.nft = true;
+      
+      await createWallet.save();
+    } catch (error) {
+      console.log("insert wallet funcion createNickname: ", error)   
+    }
   
     return result;
 

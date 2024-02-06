@@ -20,6 +20,12 @@ let textEncryp = encryp.encryp("este texto se encryptara");
 class WalletService {
 
   async sendCode(email:string) {
+    const verifyEmail = await Wallet.findOne({where: {email: email}});
+
+    if(!verifyEmail) {
+      throw new Error("El correo no esta registrado, debe crear una cuenta")
+    }
+
     const result = await emailUtils.sendCode(email)
 
     return result
@@ -62,7 +68,9 @@ class WalletService {
   async emailWalletImport(code: string, email: string) {
     await this.verifyCode(code, email)
     
-    const response = await walletUtils.emailRegistered(email)
+    const response = "funcion deprecada"
+
+    // const response = await walletUtils.emailRegistered(email)
 
     return response
     
@@ -78,11 +86,11 @@ class WalletService {
       if(!wallet) {
         throw new Error ("Email is not registered")
       } else {
-        const response = await walletUtils.createNickname(nickname);
-        await Wallet.update({email:email}, {seedPhrase: encryp.encryp(response.seedPhrase), nickname: true})
-        response.isExists = true;
+        // const response = await walletUtils.createNickname(nickname, email, cedula);
+        // await Wallet.update({email:email}, {seedPhrase: encryp.encryp(response.seedPhrase), nickname: true})
+        // response.isExists = true;
 
-        return response
+        return {}
       }
     } catch (err:any) {
       throw new Error (err.toString())
@@ -92,9 +100,9 @@ class WalletService {
 
 
 
-  async createNickname(nickname: string) {
+  async createNickname(nickname: string, email: string, cedula: string) {
       
-    const result = await walletUtils.createNickname(nickname)
+    const result = await walletUtils.createNickname(nickname, email, cedula)
     
     return result;
   }

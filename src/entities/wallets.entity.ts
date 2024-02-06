@@ -22,6 +22,11 @@ export class Wallet extends BaseEntity {
   email!: string;
 
   @Column({
+    nullable: true,
+  })
+  cedula!: string;
+
+  @Column({
     unique: true,
     nullable: false,
   })
@@ -32,6 +37,11 @@ export class Wallet extends BaseEntity {
     default: false
   })
   nickname!: boolean;
+
+  @Column({
+    default: false
+  })
+  nft!: boolean;
 
   @CreateDateColumn({type: "timestamptz"})
   creation_date!: Date;
