@@ -4,11 +4,14 @@ const nodemailer = require("nodemailer");
 export const transporter = nodemailer.createTransport({
   host: process.env.HOST_EMAIL,
   port: process.env.PORT_EMAIL,
-  secure: true,
+  secure: false, // true for 465, false for other ports
   auth: {
     user: process.env.USER_EMAIL,
     pass: process.env.PASS_EMAIL,
   },
+  tls: {
+    ciphers:'SSLv3'
+  }
 });
 
 transporter.verify().then(() => {
