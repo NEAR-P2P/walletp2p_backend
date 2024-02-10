@@ -1,7 +1,16 @@
 const nodemailer = require("nodemailer");
 
  // TODO: replace `user` and `pass` values from <https://forwardemail.net>
-export const transporter = nodemailer.createTransport({
+ const network = process.env.NETWORK || "";
+ const config = network == "testnet" ? {
+  host: process.env.HOST_EMAIL,
+  port: process.env.PORT_EMAIL,
+  secure: true, // true for 465, false for other ports
+  auth: {
+    user: process.env.USER_EMAIL,
+    pass: process.env.PASS_EMAIL,
+  }
+} : {
   host: process.env.HOST_EMAIL,
   port: process.env.PORT_EMAIL,
   secure: false, // true for 465, false for other ports
@@ -12,7 +21,9 @@ export const transporter = nodemailer.createTransport({
   tls: {
     ciphers:'SSLv3'
   }
-});
+}
+
+export const transporter = nodemailer.createTransport(config);
 
 transporter.verify().then(() => {
   console.log("ready email")

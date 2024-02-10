@@ -27,10 +27,11 @@ const sendCode = async (email: string) => {
 
   if (!save) throw new Error("Error al generar codigo");
 
+  const network = process.env.NETWORK || "";
   await transporter.sendMail({
     //from: '"verificación 👻" <developer@dvconsultores.com>', // sender address
     //from: '"verificación" <hrpmdevelop@gmail.com>', // sender address
-    from: '"verificación" <developer@dvconsultores.com>', // sender address
+    from: (network == "testnet" ? '"verificación" <hrpmdevelop@gmail.com>' : '"verificación" <developer@dvconsultores.com>'), // sender address
     to: email, // list of receivers
     subject: "Codigo de verificación Hello ✔", // Subject line
     text: "Codigo de verificación", // plain text body
