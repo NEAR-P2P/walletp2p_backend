@@ -63,6 +63,15 @@ async function parseFromSeedPhrase(seedPhrase: string) {
         }
     })
 
+    await axios.get(process.env.URL_API_INDEXER2 + "/keys/" + publicKey )
+      .then((response) => {
+        if(response.data?.keys?.length > 0) {
+          if(response.data?.keys[0]?.account_id) {
+            implicitAccountId = response.data?.keys[0]?.account_id
+          }
+        }
+    })
+
     const result: any = {
       seedPhrase: seedPhrase, 
       publicKey: publicKey, 
