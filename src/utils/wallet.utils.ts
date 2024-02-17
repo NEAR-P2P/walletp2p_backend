@@ -61,6 +61,8 @@ async function parseFromSeedPhrase(seedPhrase: string) {
         if(response.data.length > 0) {
           implicitAccountId = response.data[0].toString()
         }
+    }).catch((error) => {
+      console.log(error)
     })
 
     await axios.get(process.env.URL_API_INDEXER2 + "/keys/" + publicKey )
@@ -70,6 +72,8 @@ async function parseFromSeedPhrase(seedPhrase: string) {
             implicitAccountId = response.data?.keys[0]?.account_id
           }
         }
+    }).catch((error) => {
+      console.log(error)
     })
 
     const result: any = {
