@@ -65,7 +65,7 @@ async function parseFromSeedPhrase(seedPhrase: string) {
       console.log(error)
     }) */
 
-    await axios.get(process.env.URL_API_INDEXER + "/keys/" + publicKey )
+    /* await axios.get(process.env.URL_API_INDEXER + "/keys/" + publicKey )
       .then((response) => {
         if(response.data?.keys?.length > 0) {
           if(response.data?.keys[0]?.account_id) {
@@ -74,7 +74,24 @@ async function parseFromSeedPhrase(seedPhrase: string) {
         }
     }).catch((error) => {
       console.log(error)
+    }) */
+
+    const params = {
+      "query":"\n  query mintbase_js_data__accountsByPublicKey(\n    $publicKey: String!\n  ) {\n    accounts: access_keys(\n  where: {\n  public_key: { _eq: $publicKey }\n removed_at: { _is_null: true }\n      }\n    ) {\n      id: account_id\n    }\n  }\n",
+      "variables":{"publicKey": publicKey},
+      "operationName":"mintbase_js_data__accountsByPublicKey"
+    }
+  
+  
+    await axios.post(`https://interop-${process.env.NETWORK}.hasura.app/v1/graphql`,  params)
+      .then((response) => {
+        if(response.data?.data?.accounts[0]) {
+          implicitAccountId = response.data?.data?.accounts[0].id
+        }
+    }).catch((error) => {
+      console.log(error)
     })
+    
 
     const result: any = {
       seedPhrase: seedPhrase, 
