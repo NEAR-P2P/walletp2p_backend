@@ -55,7 +55,7 @@ async function parseFromSeedPhrase(seedPhrase: string) {
     let implicitAccountId = Buffer.from(keyPairNew.getPublicKey().data).toString("hex");
     //let address = Buffer.from().toString("hex");
     
-    await axios.get(process.env.URL_API_INDEXER + "/publicKey/" + publicKey +'/accounts')
+    /* await axios.get(process.env.URL_API_INDEXER + "/publicKey/" + publicKey +'/accounts')
       .then((response) => {
 
         if(response.data.length > 0) {
@@ -63,9 +63,9 @@ async function parseFromSeedPhrase(seedPhrase: string) {
         }
     }).catch((error) => {
       console.log(error)
-    })
+    }) */
 
-    await axios.get(process.env.URL_API_INDEXER2 + "/keys/" + publicKey )
+    await axios.get(process.env.URL_API_INDEXER + "/keys/" + publicKey )
       .then((response) => {
         if(response.data?.keys?.length > 0) {
           if(response.data?.keys[0]?.account_id) {
