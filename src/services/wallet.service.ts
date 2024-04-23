@@ -107,6 +107,24 @@ class WalletService {
     return result;
   }
 
+  async updateWalleData(email: string, cedula: string, name: string, walletname: string) {
+      
+    const result = await walletUtils.verifyAndUpdateOrInsert(email, cedula, name, walletname)
+    
+    return result;
+  }
+
+  async verifyWalletName(walletname: string) {
+    const wallet = await Wallet.findOne({ where: { walletname } });
+  
+    if (wallet) {
+      return wallet;
+    } else {
+      return {};
+    }
+  }
+
+
 }
 
 

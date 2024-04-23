@@ -33,6 +33,16 @@ export class Wallet extends BaseEntity {
   seedPhrase!: string;
 
   @Column({
+    nullable: true,
+  })
+  name!: string;
+
+  @Column({
+    nullable: true,
+  })
+  walletname!: string;
+
+  @Column({
     nullable: false,
     default: false
   })
