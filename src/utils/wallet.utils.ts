@@ -336,10 +336,16 @@ async function createNickname(nickname: string, email: string, cedula: string) {
 }
 
 async function verifyAndUpdateOrInsert(email: string, cedula: string, name: string, walletname: string) {
+  if (!cedula) {
+    throw new Error('Cedula is required');
+  }
+  // console.log(`Searching for wallet with cedula: ${cedula}`);
   let wallet = await Wallet.findOne({where: {email: email.trim()}});
+  console.log('wallet', wallet)
   if (wallet) {
     console.log('Actualizando wallet')
     // If email exists, update cedula and name
+    wallet.email = email;
     wallet.cedula = cedula;
     wallet.name = name;
     wallet.walletname = walletname;
@@ -354,7 +360,7 @@ async function verifyAndUpdateOrInsert(email: string, cedula: string, name: stri
     wallet.name = name;
     wallet.walletname = walletname;
   }
-  await wallet.save();
+    await wallet.save();
   return wallet;
 }
 
