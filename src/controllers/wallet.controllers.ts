@@ -96,8 +96,33 @@ const verifyGoogle = async (req: Request, res: Response) => {
   }
 };
 
+const updateAndVerifyWallet = async (req: Request, res: Response) => {
+  try {
+    const {email, cedula, name, walletname} = req.body;
+    res.send({
+      data: await service.updateWalleData(email, cedula, name, walletname)
+    });
+  } catch (error: any) {
+    console.log(error)
+    let statusCode = error.message.split("-").length > 0 ? Number(error.message.split("-")[0]) ? Number(error.message.split("-")[0]) : 500 : 500;
+    res.status(statusCode).send(error.message);
+  }
+};
 
-export default { sendCode, sendCodeVerifyEmail, verifyCode, emailWalletImport, emailCreateNickname, createNickname, verifyGoogle }
+const verifyWalletName = async (req: Request, res: Response) => {
+  try {
+    const {walletname} = req.body;
+    res.send({
+      data: await service.verifyWalletName(walletname)
+    });
+  } catch (error: any) {
+    console.log(error)
+    let statusCode = error.message.split("-").length > 0 ? Number(error.message.split("-")[0]) ? Number(error.message.split("-")[0]) : 500 : 500;
+    res.status(statusCode).send(error.message);
+  }
+};  
+
+export default { sendCode, sendCodeVerifyEmail, verifyCode, emailWalletImport, emailCreateNickname, createNickname, verifyGoogle, updateAndVerifyWallet, verifyWalletName }
 
 
 

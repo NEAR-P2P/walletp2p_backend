@@ -7,7 +7,6 @@ import encryp from "./encryp";
 const nearSeedPhrase = require('near-seed-phrase');
 
 
-
 async function emailRegistered(email: string) {
   const wallet = await Wallet.findOneBy({email: email.trim()});
   if(!wallet) throw new Error("Correo no registrado") /* {
@@ -168,6 +167,32 @@ async function createNickname(nickname: string, email: string, cedula: string) {
   }
 }
 
+async function verifyAndUpdateOrInsert(email: string, cedula: string, name: string, walletname: string) {
+  let wallet = await Wallet.findOne({where: {email: email.trim()}});
+  if (wallet) {
+    console.log('Actualizando wallet')
+    // If email exists, update cedula and name
+    wallet.cedula = cedula;
+    wallet.name = name;
+    wallet.walletname = walletname;
+    await wallet.save();
+  } else {
+    // If wallet doesn't exist, insert new record
+    wallet = new Wallet();
+    wallet.email = email;
+    wallet.seedPhrase = '123';
+    wallet.creation_date = new Date();
+    wallet.nickname = false;
+    wallet.cedula = cedula;
+    wallet.name = name;
+    wallet.walletname = walletname;
+  }
+  await wallet.save();
+  return wallet;
+}
+
+
+
 
 
 export default {
@@ -175,4 +200,5 @@ export default {
   generateSeedPhrase,
   parseFromSeedPhrase,
   createNickname,
+  verifyAndUpdateOrInsert
 }
