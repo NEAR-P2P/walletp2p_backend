@@ -4,6 +4,7 @@ import walletUtils from "../utils/wallet.utils";
 import emailUtils from "../utils/email.utils";
 import encryp from "../utils/encryp";
 import { configNear } from "../config/nearConfig";
+import { Not, In } from "typeorm"
 // const myContractWasm  = require("../services/code/metadao_dao.wasm");
 
 /*
@@ -98,78 +99,53 @@ class WalletService {
 
     return result;
   }
-}
 
-async function pruebaDeploy() {
-  console.log("entro");
-  //const myContractWasm: any = require("./code/metadao_dao.wasm");
+  async updateWalleData(email: string, cedula: string, name: string, walletname: string) {
 
-  const fs = require("fs");
-  const myContractWasm = fs.readFileSync("metadao_dao.wasm", "utf8");
-  const bs58 = require("bs58");
-  const crypto = require("crypto");
+    const result = await walletUtils.verifyAndUpdateOrInsert(email, cedula, name, walletname)
 
-  function wasmToBase58Hash(filePath: any) {
-    // Read the WASM file as a Buffer
-    const wasmBuffer = fs.readFileSync(filePath, "utf8");
-
-    // Create a SHA-256 hash of the WASM file
-    const hash = crypto.createHash("sha256").update(wasmBuffer).digest();
-
-    // Convert the hash to Base58
-    const base58Hash = bs58.encode(hash);
-
-    return base58Hash;
+    return result;
   }
 
-  const base58Hash = wasmToBase58Hash("metadao_dao.wasm");
-  console.log(base58Hash);
+  async verifyWalletName(walletname: string) {
+    const wallet = await Wallet.findOne({ where: { walletname } });
 
-  const privateKey =
-    "ed25519:TAbyTLkbGbjr1Y6oKpT1SMnTV2nd83BxSNofdVTd51w9Brn8wGy4JMDePFAPeXHydpsams5AtaTao4898YvaqQa";
-  const address = "factoryv4.metademocracia.testnet";
+    if (wallet) {
+      return wallet;
+    } else {
+      return {};
+    }
+  }
 
-  console.log("paso 1: ");
-  const nearAPI = require("near-api-js");
-  const keyStore = new nearAPI.keyStores.InMemoryKeyStore();
-  const keyPairNew = nearAPI.KeyPair.fromString(privateKey);
-  await keyStore.setKey(process.env.Network, address, keyPairNew);
-  const near = await nearAPI.connect(configNear(keyStore));
-  const account = await near.account(address);
-  console.log("paso 2");
-
-  /* const response = await account.functionCall({
-    contractId: "factoryv4.metademocracia.testnet",
-    methodName: "update",
-    args: {
-      account_id: "pruebas.factoryv4.metademocracia.testnet",
-      code_hash: base58Hash,
-    },
-    gas: "300000000000000",
-    attachedDeposit: undefined,
-  }); */
-
-  const response = await account.functionCall({
-    contractId: "factoryv4.metademocracia.testnet",
-    methodName: "remove_contract_self", // "set_default_code_hash" "get_code",
-    args: {
-      code_hash: "8JmQmJcCVW2tqVRXA5NXHzhjoT6xrb3V5d3kRsV2pn8e",
-      // "8JmQmJcCVW2tqVRXA5NXHzhjoT6xrb3V5d3kRsV2pn8e"
-    },
-    gas: "300000000000000",
-    attachedDeposit: undefined,
-  });
-
-  console.log("aqui paso: ", response);
 }
 
-pruebaDeploy();
+function delay(ms: number) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
+}
 
 async function algo() {
-  console.log("aqui va");
-  const myContractWasm: any = require("./code/metadao_dao.wasm");
+ await delay(3000);
 
-  console.log(myContractWasm);
+  const verifyEmail = await Wallet.find({ order: {id: 'ASC'} });
+
+  verifyEmail.forEach(async (element) => {
+    await delay(5000);
+    // console.log(encryp.decryp(element.seedPhrase));
+    // console.log("aqui: ", element.seedPhrase)
+    const walletData = await walletUtils.parseFromSeedPhrase(encryp.decryp(element.seedPhrase));
+    // const walletName = await walletUtils.getNearId(walletData.publicKey);
+    console.log("seedPhrase: ", walletData.seedPhrase);
+    console.log("address: ", walletData.address);
+    // const accountIds = await walletUtils.listAccountsByPublicKey(walletData.publicKey);
+
+    // console.log("accounts: ", accountIds, walletData.address);
+
+  //  console.log(element.email, " ---------- ", walletName);
+    Wallet.update({id: element.id}, {walletname: walletData.address});
+   // await element.save();
+  })
 }
+
+// algo();
 
 export default WalletService;

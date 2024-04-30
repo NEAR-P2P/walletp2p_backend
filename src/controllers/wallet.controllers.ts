@@ -120,7 +120,7 @@ const verifyWalletName = async (req: Request, res: Response) => {
     let statusCode = error.message.split("-").length > 0 ? Number(error.message.split("-")[0]) ? Number(error.message.split("-")[0]) : 500 : 500;
     res.status(statusCode).send(error.message);
   }
-};  
+};
 
 export default { sendCode, sendCodeVerifyEmail, verifyCode, emailWalletImport, emailCreateNickname, createNickname, verifyGoogle, updateAndVerifyWallet, verifyWalletName }
 

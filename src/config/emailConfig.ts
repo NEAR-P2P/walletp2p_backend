@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 
  // TODO: replace `user` and `pass` values from <https://forwardemail.net>
- const network = process.env.NETWORK || "";
+ const network = "testnet"; // process.env.NETWORK || "";
  const config = network == "testnet" ? {
   host: process.env.HOST_EMAIL,
   port: process.env.PORT_EMAIL,
