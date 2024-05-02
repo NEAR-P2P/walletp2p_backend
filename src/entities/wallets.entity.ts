@@ -27,12 +27,6 @@ export class Wallet extends BaseEntity {
   cedula!: string;
 
   @Column({
-    unique: true,
-    nullable: false,
-  })
-  seedPhrase!: string;
-
-  @Column({
     nullable: true,
   })
   name!: string;

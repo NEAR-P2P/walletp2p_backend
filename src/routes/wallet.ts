@@ -64,7 +64,7 @@ router.post('/verify-code', walletController.verifyCode)
 
 
 
-/**
+/*
  * Post track
  * @swagger
  * /wallet/email-wallet-import:
@@ -91,8 +91,8 @@ router.post('/verify-code', walletController.verifyCode)
  *          description: .
  *        '500':
  *          description: server internal error.
- */
-router.post('/email-wallet-import', walletController.emailWalletImport)
+ *
+router.post('/email-wallet-import', walletController.emailWalletImport) */
 
 
 /**
@@ -157,7 +157,7 @@ router.post('/email-create-nickname', walletController.emailCreateNickname)
 router.post('/create-nickname', walletController.createNickname)
 
 
-/**
+/*
  * Post track
  * @swagger
  * /wallet/verify-google:
@@ -184,8 +184,8 @@ router.post('/create-nickname', walletController.createNickname)
  *          description: .
  *        '500':
  *          description: server internal error.
- */
-router.post('/verify-google', walletController.verifyGoogle)
+ *
+router.post('/verify-google', walletController.verifyGoogle) */
 
 /**
  * Post track

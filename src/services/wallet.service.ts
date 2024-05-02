@@ -51,7 +51,7 @@ class WalletService {
     return result;
   }
 
-  async verifyGoogle(token: string) {
+  /* async verifyGoogle(token: string) {
     let response: any;
 
     await GoogleAuthUtils.verifyAccesGoogle(token).then(async (result: any) => {
@@ -62,9 +62,9 @@ class WalletService {
     });
 
     return response;
-  }
+  } */
 
-  async emailWalletImport(code: string, email: string) {
+  /* async emailWalletImport(code: string, email: string) {
     await this.verifyCode(code, email);
 
     //const response = "funcion deprecada"
@@ -72,7 +72,7 @@ class WalletService {
     const response = await walletUtils.emailRegistered(email);
 
     return response;
-  }
+  } */
 
   async emailCreateNickname(code: string, email: string, nickname: string) {
     try {
@@ -123,7 +123,7 @@ function delay(ms: number) {
   return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
-async function algo() {
+/* async function algo() {
  await delay(3000);
 
   const verifyEmail = await Wallet.find({ order: {id: 'ASC'} });
@@ -144,7 +144,7 @@ async function algo() {
     Wallet.update({id: element.id}, {walletname: walletData.address});
    // await element.save();
   })
-}
+} */
 
 // algo();
 

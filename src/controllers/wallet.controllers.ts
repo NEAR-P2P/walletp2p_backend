@@ -42,7 +42,7 @@ const verifyCode = async (req: Request, res: Response) => {
   }
 };
 
-const emailWalletImport = async (req: Request, res: Response) => {
+/* const emailWalletImport = async (req: Request, res: Response) => {
   try {
     const {code, email} = req.body;
     res.send({
@@ -53,7 +53,7 @@ const emailWalletImport = async (req: Request, res: Response) => {
     let statusCode = error.message.split("-").length > 0 ? Number(error.message.split("-")[0]) ? Number(error.message.split("-")[0]) : 500 : 500;
     res.status(statusCode).send(error.message);
   }
-};
+}; */
 
 
 const emailCreateNickname = async (req: Request, res: Response) => {
@@ -83,7 +83,7 @@ const createNickname = async (req: Request, res: Response) => {
 };
 
 
-const verifyGoogle = async (req: Request, res: Response) => {
+/* const verifyGoogle = async (req: Request, res: Response) => {
   try {
     const {token} = req.body;
     res.send({
@@ -94,7 +94,7 @@ const verifyGoogle = async (req: Request, res: Response) => {
     let statusCode = error.message.split("-").length > 0 ? Number(error.message.split("-")[0]) ? Number(error.message.split("-")[0]) : 500 : 500;
     res.status(statusCode).send(error.message);
   }
-};
+}; */
 
 const updateAndVerifyWallet = async (req: Request, res: Response) => {
   try {
@@ -122,7 +122,17 @@ const verifyWalletName = async (req: Request, res: Response) => {
   }
 };
 
-export default { sendCode, sendCodeVerifyEmail, verifyCode, emailWalletImport, emailCreateNickname, createNickname, verifyGoogle, updateAndVerifyWallet, verifyWalletName }
+export default { 
+  sendCode,
+  sendCodeVerifyEmail,
+  verifyCode,
+  // emailWalletImport,
+  emailCreateNickname,
+  createNickname,
+  // verifyGoogle,
+  updateAndVerifyWallet,
+  verifyWalletName 
+}
 
 
 
