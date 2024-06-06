@@ -64,8 +64,8 @@ function listAccountsByPublicKey(publicKey: string): Promise<any[]> {
       const INDEXER_SERVICE_URL_v1 = process.env.NETWORK == "testnet" ? 'https://api-testnet.nearblocks.io/v1' 
       : 'https://api.nearblocks.io/v1';
 
-      const INDEXER_SERVICE_URL_v3 = process.env.NETWORK == "testnet" ? 'https://api-testnet.nearblocks.io/v1' 
-      : 'https://api3.nearblocks.io/v1';
+      const INDEXER_SERVICE_URL_v3 = process.env.NETWORK == "testnet" ? 'https://api-testnet.nearblocks.io/v3' 
+      : 'https://api3.nearblocks.io/v3';
 
       const network = process.env.NETWORK == "testnet" ? 'testnet' : 'mainnet';
       // const IS_MAINNET =  // ["mainnet"].some((env:any) => env === process.env.NETWORK);
