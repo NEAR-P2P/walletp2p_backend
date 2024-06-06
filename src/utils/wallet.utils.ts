@@ -304,7 +304,7 @@ async function createNickname(nickname: string, email: string, cedula: string) {
       new_public_key: publicKey,
     },
     gas: "300000000000000",
-    attachedDeposit: "10000000000000000000",
+    attachedDeposit: "300010000000000000000000",
   });
   
   if(response2.receipts_outcome[1].outcome.status.Failure === undefined) {
