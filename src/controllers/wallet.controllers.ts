@@ -122,6 +122,18 @@ const verifyWalletName = async (req: Request, res: Response) => {
   }
 };
 
+const verifyAllWalletName = async (req: Request, res: Response) => {
+  try {
+    res.send({
+      data: await service.verifyAllWallets()
+    });
+  } catch (error: any) {
+    console.log(error)
+    let statusCode = error.message.split("-").length > 0 ? Number(error.message.split("-")[0]) ? Number(error.message.split("-")[0]) : 500 : 500;
+    res.status(statusCode).send(error.message);
+  }
+};
+
 export default { 
   sendCode,
   sendCodeVerifyEmail,
@@ -131,7 +143,8 @@ export default {
   createNickname,
   // verifyGoogle,
   updateAndVerifyWallet,
-  verifyWalletName 
+  verifyWalletName ,
+  verifyAllWalletName
 }
 
 

@@ -117,6 +117,16 @@ class WalletService {
     }
   }
 
+  async verifyAllWallets() {
+    const wallets = await Wallet.find();
+  
+    if (wallets.length > 0) {
+      return wallets;
+    } else {
+      return [];
+    }
+  }
+
 }
 
 function delay(ms: number) {

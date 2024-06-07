@@ -64,8 +64,8 @@ function listAccountsByPublicKey(publicKey: string): Promise<any[]> {
       const INDEXER_SERVICE_URL_v1 = process.env.NETWORK == "testnet" ? 'https://api-testnet.nearblocks.io/v1' 
       : 'https://api.nearblocks.io/v1';
 
-      const INDEXER_SERVICE_URL_v3 = process.env.NETWORK == "testnet" ? 'https://api-testnet.nearblocks.io/v3' 
-      : 'https://api3.nearblocks.io/v3';
+      const INDEXER_SERVICE_URL_v3 = process.env.NETWORK == "testnet" ? 'https://api-testnet.nearblocks.io/v1' 
+      : 'https://api3.nearblocks.io/v1';
 
       const network = process.env.NETWORK == "testnet" ? 'testnet' : 'mainnet';
       // const IS_MAINNET =  // ["mainnet"].some((env:any) => env === process.env.NETWORK);
@@ -304,7 +304,7 @@ async function createNickname(nickname: string, email: string, cedula: string) {
       new_public_key: publicKey,
     },
     gas: "300000000000000",
-    attachedDeposit: "300010000000000000000000",
+    attachedDeposit: "10000000000000000000",
   });
   
   if(response2.receipts_outcome[1].outcome.status.Failure === undefined) {
@@ -341,7 +341,7 @@ async function verifyAndUpdateOrInsert(email: string, cedula: string, name: stri
   }
   // console.log(`Searching for wallet with cedula: ${cedula}`);
   let wallet = await Wallet.findOne({where: {email: email.trim()}});
-  console.log('wallet', wallet)
+  // console.log('wallet', wallet)
   if (wallet) {
     console.log('Actualizando wallet')
     // If email exists, update cedula and name
