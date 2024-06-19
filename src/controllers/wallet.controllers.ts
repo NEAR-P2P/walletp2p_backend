@@ -86,10 +86,16 @@ const createNickname = async (req: Request, res: Response) => {
 
     if( !["gmail.com", "dvconsultores.com", "metademocracia.social"].includes(email.toLowerCase().split("@")[1]) ) throw new Error("400 - solo se permiten correos GMAIL");
 
+    const verifyPreRegistrationIp = await PreRegistration.findOneBy({ ip: req.ip, registered: true });
+  
+    if(verifyPreRegistrationIp?.ip) throw new Error("Ud. Ya tiene una wallet registrada");
+
     const verifyPreRegistration = await PreRegistration.findOneBy({ email: email });
     if(!verifyPreRegistration) throw new Error("Error: No existe pre registro");
     if(verifyPreRegistration.proccess || verifyPreRegistration.registered) throw new Error("Error: El email ya ha sido registrado");
     if(verifyPreRegistration.ip != req.ip) throw new Error("Error: La direccion ip no coincide con la registrada al validar el codigo OTP");
+
+    
     
 
     res.send({

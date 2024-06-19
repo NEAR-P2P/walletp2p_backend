@@ -18,7 +18,7 @@ const sendCode = async (email: string, cedula: string, ip: string) => {
 
   const verifyPreRegistrationIp = await PreRegistration.findOneBy({ ip: ip, registered: true });
   
-  if(verifyPreRegistrationIp) throw new Error("Ud. Ya tiene una wallet registrada");
+  if(verifyPreRegistrationIp?.ip) throw new Error("Ud. Ya tiene una wallet registrada");
 
   const verifyPreRegistration = await PreRegistration.findOneBy({ email: email });
 
