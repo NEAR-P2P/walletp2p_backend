@@ -24,7 +24,9 @@ const sendCodeVerifyEmail = async (req: Request, res: Response) => {
     
     if( email.toLowerCase().split("@").includes("gmail.com") ) throw new Error("400 - solo se permiten correos GMAIL");
 
-    const ip: string = req.ip;
+    const ip: string | undefined = req.ip || req.connection.remoteAddress;
+    if(!ip) throw new Error("400 - no se pudo obtener la direccion ip del cliente");
+
     res.send({
       data: await service.sendCodeVerifyEmail(email, cedula, ip)
     });
