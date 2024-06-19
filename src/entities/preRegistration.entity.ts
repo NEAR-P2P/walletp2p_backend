@@ -27,6 +27,7 @@ export class PreRegistration extends BaseEntity {
   cedula!: string;
 
   @Column({
+    unique: true,
     nullable: false,
   })
   ip!: string;
