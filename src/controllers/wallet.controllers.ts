@@ -84,7 +84,7 @@ const createNickname = async (req: Request, res: Response) => {
   try {
     const {nickname, email, cedula} = req.body;
 
-    if( email.toLowerCase().split("@").includes("gmail.com") ) throw new Error("400 - solo se permiten correos GMAIL");
+    if( !["gmail.com", "dvconsultores.com", "metademocracia.social"].includes(email.toLowerCase().split("@")[1]) ) throw new Error("400 - solo se permiten correos GMAIL");
 
     const verifyPreRegistration = await PreRegistration.findOneBy({ email: email });
     if(!verifyPreRegistration) throw new Error("Error: No existe pre registro");
