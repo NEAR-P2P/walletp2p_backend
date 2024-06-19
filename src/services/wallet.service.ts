@@ -20,19 +20,21 @@ let textEncryp = encryp.encryp("este texto se encryptara");
 
 class WalletService {
   async sendCode(email: string) {
+    
     const verifyEmail = await Wallet.findOne({ where: { email: email } });
 
     if (!verifyEmail) {
       throw new Error("El correo no esta registrado, debe crear una cuenta");
     }
 
-    const result = await emailUtils.sendCode(email);
+    const result = "deprecado";//await emailUtils.sendCode(email);
 
     return result;
   }
 
-  async sendCodeVerifyEmail(email: string) {
+  async sendCodeVerifyEmail(email: string, cedula: string, ip: string) {
     const verifyEmail = await Wallet.findOne({ where: { email: email } });
+    const verifyCedula = await Wallet.findOne({ where: { cedula: cedula } });
 
     if (verifyEmail) {
       throw new Error(
@@ -40,7 +42,13 @@ class WalletService {
       );
     }
 
-    const result = await emailUtils.sendCode(email);
+    if (verifyCedula) {
+      throw new Error(
+        "La cedula ya esta registrado, use una cedula diferente"
+      );
+    }
+
+    const result = await emailUtils.sendCode(email, cedula, ip);
 
     return result;
   }
@@ -95,6 +103,7 @@ class WalletService {
   }
 
   async createNickname(nickname: string, email: string, cedula: string) {
+
     const result = await walletUtils.createNickname(nickname, email, cedula);
 
     return result;

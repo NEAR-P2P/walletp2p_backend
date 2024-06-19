@@ -2,8 +2,9 @@ import { transporter } from "../config/emailConfig";
 import { Wallet } from "../entities/wallets.entity";
 import { OtpList } from "../entities/otp.entity";
 const otpGenerator = require("otp-generator");
+import { PreRegistration } from "../entities/preRegistration.entity";
 
-const sendCode = async (email: string) => {
+const sendCode = async (email: string, cedula: string, ip: string) => {
   const otp = otpGenerator.generate(4, {
     lowerCaseAlphabets: false,
     upperCaseAlphabets: false,
@@ -15,12 +16,29 @@ const sendCode = async (email: string) => {
     userRegister = true;
   });
 
+  const verifyPreRegistration = await PreRegistration.findOneBy({ email: email });
+
+  if(verifyPreRegistration) {
+    if(verifyPreRegistration.proccess || verifyPreRegistration.registered) throw new Error("El email ya ha sido registrado");
+    
+    await PreRegistration.update({ email: email }, { cedula: cedula, ip: ip, validOtp: false});
+  } else {
+    const createPreRegistration = new PreRegistration();
+    createPreRegistration.cedula = cedula;
+    createPreRegistration.email = email.toLocaleLowerCase();
+    createPreRegistration.ip = ip;
+
+    const createPreRegistrationSave = await createPreRegistration.save();
+
+    if (!createPreRegistrationSave) throw new Error("Error al generar pre registro");
+  }
+
   await OtpList.findOne({ where: { email: email } }).then(() => {
     OtpList.delete({ email: email });
   });
 
   const otpList = new OtpList();
-  otpList.email = email;
+  otpList.email = email.toLocaleLowerCase();
   otpList.code = otp;
 
   const save = await otpList.save();
@@ -38,8 +56,11 @@ const sendCode = async (email: string) => {
     html: "<p>Su codigo es: <b>" + otp + "</b> </p>", // html body
   });
 
+
   return { userRegister: userRegister };
 };
+
+
 
 const verifyCode = async (code: string, email: string) => {
   const optlist = await OtpList.findOne({ where: { email: email } });
@@ -52,12 +73,13 @@ const verifyCode = async (code: string, email: string) => {
   if (optlist.code == code) {
     let creationDate = new Date(optlist.creation_date);
     let currentDate = new Date();
-    let minutosDiff =
-      (currentDate.getTime() - creationDate.getTime()) / 1000 / 60;
+    let minutosDiff = (currentDate.getTime() - creationDate.getTime()) / 1000 / 60;
 
     if (minutosDiff > Number(process.env.TIME_ESPIRATE_SECOND)) {
       throw new Error("Su codigo ha caducado, solicite un nuevo codigo");
     }
+
+    await PreRegistration.update({ email: email }, { validOtp: true });
 
     return true;
   } else {

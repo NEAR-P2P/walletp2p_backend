@@ -5,6 +5,7 @@ import {configNear} from '../config/nearConfig';
 import { Wallet } from "../entities/wallets.entity";
 import encryp from "./encryp";
 import { accountsByPublicKey } from '@mintbase-js/data';
+import { PreRegistration } from "../entities/preRegistration.entity";
 
 const nearSeedPhrase = require('near-seed-phrase');
 
@@ -272,66 +273,77 @@ async function parseFromSeedPhrase(seedPhrase: string) {
 
 
 async function createNickname(nickname: string, email: string, cedula: string) {
+  try {
+
+    await PreRegistration.update({ email: email }, { proccess: true });
+
+    const privateKey = process.env.CREATE_NICKNAME_PRIVATEKEY;
+    const address =  process.env.CREATE_NICKNAME_ADDRESS;
     
-  const privateKey = process.env.CREATE_NICKNAME_PRIVATEKEY;
-  const address =  process.env.CREATE_NICKNAME_ADDRESS;
-  
 
-  // creates a public / private key pair using the provided private key
-  // adds the keyPair you created to keyStore
-  const myKeyStore = new keyStores.InMemoryKeyStore();
-  const keyPairOld = KeyPair.fromString(privateKey);
-  await myKeyStore.setKey(process.env.NETWORK, address, keyPairOld);
+    // creates a public / private key pair using the provided private key
+    // adds the keyPair you created to keyStore
+    const myKeyStore = new keyStores.InMemoryKeyStore();
+    const keyPairOld = KeyPair.fromString(privateKey);
+    await myKeyStore.setKey(process.env.NETWORK, address, keyPairOld);
 
- 
- 
- 
-  const nearConnection = await connect(configNear(myKeyStore));
-  const account = await nearConnection.account(address);
-  
-  // const creatorAccount = await nearConnection.account(address);
-  const {seedPhrase, secretKey} = nearSeedPhrase.generateSeedPhrase();
-  const keyPairNew = KeyPair.fromString(secretKey);;// KeyPair.fromRandom("ed25519");
-  const publicKey = keyPairNew.publicKey.toString();
-  await myKeyStore.setKey(process.env.NETWORK, nickname, keyPairNew);
+    const nearConnection = await connect(configNear(myKeyStore));
+    const account = await nearConnection.account(address);
+    
+    // const creatorAccount = await nearConnection.account(address);
+    const {seedPhrase, secretKey} = nearSeedPhrase.generateSeedPhrase();
+    const keyPairNew = KeyPair.fromString(secretKey);;// KeyPair.fromRandom("ed25519");
+    const publicKey = keyPairNew.publicKey.toString();
+    await myKeyStore.setKey(process.env.NETWORK, nickname, keyPairNew);
 
-  
-  const response2 = await account.functionCall({
-    contractId: process.env.NETWORK == "testnet" ? process.env.NETWORK : "near",
-    methodName: "create_account",
-    args: {
-      new_account_id: nickname,
-      new_public_key: publicKey,
-    },
-    gas: "300000000000000",
-    attachedDeposit: "300010000000000000000000",
-  });
-  
-  if(response2.receipts_outcome[1].outcome.status.Failure === undefined) {
-    const result: any = {
-      seedPhrase: seedPhrase, 
-      publicKey: publicKey, 
-      secretKey: keyPairNew.secretKey,
-      address: nickname,
-      isExists: true,
-    };
+    
+    const response2 = await account.functionCall({
+      contractId: process.env.NETWORK == "testnet" ? process.env.NETWORK : "near",
+      methodName: "create_account",
+      args: {
+        new_account_id: nickname,
+        new_public_key: publicKey,
+      },
+      gas: "300000000000000",
+      attachedDeposit: "200010000000000000000000",
+    });
+    
+    if(response2.receipts_outcome[1].outcome.status.Failure === undefined) {
+      const result: any = {
+        seedPhrase: seedPhrase, 
+        publicKey: publicKey, 
+        secretKey: keyPairNew.secretKey,
+        address: nickname,
+        isExists: true,
+      };
 
-    try {
-      const createWallet = new Wallet();
-      createWallet.email = email;
-      createWallet.walletname = nickname
-      createWallet.nickname = true;
-      createWallet.cedula = cedula;
-      
-      await createWallet.save();
-    } catch (error) {
-      console.log("insert wallet funcion createNickname: ", error)   
+      try {
+        const createWallet = new Wallet();
+        createWallet.email = email.toLowerCase();
+        createWallet.walletname = nickname
+        createWallet.nickname = true;
+        createWallet.cedula = cedula;
+        
+        await createWallet.save();
+      } catch (error) {
+        console.log("insert wallet funcion createNickname: ", error)   
+      }
+
+      try {
+        await PreRegistration.update({ email: email }, { registered: true});
+      } catch (error) {
+        console.log("update preRegistro: ", error)   
+      }
+    
+      return result;
+
+    } else {
+      await PreRegistration.update({ email: email }, { proccess: false });
+      throw new Error ("Error: " + response2.receipts_outcome[1].outcome.status.Failure.toString())
     }
-  
-    return result;
-
-  } else {
-    throw new Error ("Error: " + response2.receipts_outcome[1].outcome.status.Failure.toString())
+  } catch (error) {
+    await PreRegistration.update({ email: email }, { proccess: false });
+    throw new Error ("Error al crear nickname: " + error)
   }
 }
 

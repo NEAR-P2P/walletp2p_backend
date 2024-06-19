@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import WalletService from "../services/wallet.service";
+import { PreRegistration } from "../entities/preRegistration.entity";
 
 const service = new WalletService();
 
 const sendCode = async (req: Request, res: Response) => {
   try {
+    console.log("ip: ", req.headers['x-forwarded-for'], req.connection.remoteAddress)
     const {email} = req.body;
     res.send({
       data: await service.sendCode(email)
@@ -18,9 +20,13 @@ const sendCode = async (req: Request, res: Response) => {
 
 const sendCodeVerifyEmail = async (req: Request, res: Response) => {
   try {
-    const {email} = req.body;
+    const {email, cedula} = req.body;
+    
+    if( email.toLowerCase().split("@").includes("gmail.com") ) throw new Error("400 - solo se permiten correos GMAIL");
+
+    const ip: string = req.ip;
     res.send({
-      data: await service.sendCodeVerifyEmail(email)
+      data: await service.sendCodeVerifyEmail(email, cedula, ip)
     });
   } catch (error: any) {
     console.log(error)
@@ -32,6 +38,9 @@ const sendCodeVerifyEmail = async (req: Request, res: Response) => {
 const verifyCode = async (req: Request, res: Response) => {
   try {
     const {code, email} = req.body;
+    
+    if( email.toLowerCase().split("@").includes("gmail.com") ) throw new Error("400 - solo se permiten correos GMAIL");
+
     res.send({
       data: await service.verifyCode(code, email)
     });
@@ -60,7 +69,7 @@ const emailCreateNickname = async (req: Request, res: Response) => {
   try {
     const {code, email, nickname} = req.body;
     res.send({
-      data: await service.emailCreateNickname(code, email, nickname)
+      data: "deprecate" //await service.emailCreateNickname(code, email, nickname)
     });
   } catch (error: any) {
     console.log(error)
@@ -72,6 +81,15 @@ const emailCreateNickname = async (req: Request, res: Response) => {
 const createNickname = async (req: Request, res: Response) => {
   try {
     const {nickname, email, cedula} = req.body;
+
+    if( email.toLowerCase().split("@").includes("gmail.com") ) throw new Error("400 - solo se permiten correos GMAIL");
+
+    const verifyPreRegistration = await PreRegistration.findOneBy({ email: email });
+    if(!verifyPreRegistration) throw new Error("Error: No existe pre registro");
+    if(verifyPreRegistration.proccess || verifyPreRegistration.registered) throw new Error("Error: El email ya ha sido registrado");
+    if(verifyPreRegistration.ip != req.ip) throw new Error("Error: La direccion ip no coincide con la registrada al validar el codigo OTP");
+    
+
     res.send({
       data: await service.createNickname(nickname, email, cedula)
     });
