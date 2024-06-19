@@ -41,7 +41,7 @@ const verifyCode = async (req: Request, res: Response) => {
   try {
     const {code, email} = req.body;
     
-    if( email.toLowerCase().split("@").includes("gmail.com") ) throw new Error("400 - solo se permiten correos GMAIL");
+    if( !["gmail.com", "dvconsultores.com", "metademocracia.social"].includes(email.toLowerCase().split("@")[1]) ) throw new Error("400 - solo se permiten correos GMAIL");
 
     res.send({
       data: await service.verifyCode(code, email)
