@@ -9,7 +9,7 @@ const sendCode = async (req: Request, res: Response) => {
     console.log("ip: ", req.headers['x-forwarded-for'], req.connection.remoteAddress)
     const {email} = req.body;
     res.send({
-      data: await service.sendCode(email)
+      data: "deprecate" //await service.sendCode(email)
     });
   } catch (error: any) {
     console.log(error)
