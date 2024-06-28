@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import WalletService from "../services/wallet.service";
 import { PreRegistration } from "../entities/preRegistration.entity";
+import axios from "axios";
 
 const service = new WalletService();
 
@@ -25,7 +26,33 @@ const sendCodeVerifyEmail = async (req: Request, res: Response) => {
     if( !["gmail.com", "dvconsultores.com", "metademocracia.social"].includes(email.toLowerCase().split("@")[1]) ) throw new Error("400 - solo se permiten correos GMAIL");
 
     const ip: string | undefined = req.ip || req.connection.remoteAddress;
+
     if(!ip) throw new Error("400 - no se pudo obtener la direccion ip del cliente");
+
+    /* async function isIpFromVenezuela(ip: string): Promise<boolean> {
+      try {
+          const response = await axios.get("https://api.ipgeolocation.io/getip", {
+              params: {
+                  apiKey: "799ac91bf6e747ad8b226deef4c57480",
+                  ip: ip
+              }
+          });
+  
+          const countryCode = response.data.country_code2;
+          return countryCode === 'VE';
+      } catch (error) {
+          console.error('Error fetching geolocation data:', error);
+          return false;
+      }
+    }
+    
+    // Example usage:
+    (async () => {
+        const testIp = ip.split(':').length > 1 ? ip.split(':')[1] : ip ; // Replace with a sample IP address
+        const result = await isIpFromVenezuela(testIp);
+        console.log(`Is IP ${testIp} from Venezuela?, result`);
+        throw
+    })(); */
 
     res.send({
       data: await service.sendCodeVerifyEmail(email, cedula, ip)
