@@ -18,8 +18,28 @@ let textEncryp = encryp.encryp("este texto se encryptara");
   return new Promise( resolve => setTimeout(resolve, ms) );
 } */
 
+async function encryptBD() {
+  function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+  await delay(5000);
+  Wallet.find().then((wallets) => {
+    wallets.forEach(async (element) => {
+      await Wallet.update({ id: element.id }, { 
+        email: encryp.encryp(element.email),
+        cedula: encryp.encryp(element.cedula),
+        name: encryp.encryp(element.name), 
+        walletname: encryp.encryp(element.walletname) 
+      });
+    });
+  });
+
+}
+
+// encryptBD()
+
 class WalletService {
-  async sendCode(email: string) {
+  /* async sendCode(email: string) {
     
     const verifyEmail = await Wallet.findOne({ where: { email: email } });
 
@@ -30,11 +50,16 @@ class WalletService {
     const result = "deprecado";//await emailUtils.sendCode(email);
 
     return result;
-  }
+  } */
 
   async sendCodeVerifyEmail(email: string, cedula: string, ip: string) {
-    const verifyEmail = await Wallet.findOne({ where: { email: email } });
-    const verifyCedula = await Wallet.findOne({ where: { cedula: cedula } });
+    const emailLowerCase = email.trim().toLocaleLowerCase();
+    
+    const cedulaEncrypt = encryp.encryp(cedula);
+    const emailEncrypt = encryp.encryp(emailLowerCase);
+
+    const verifyEmail = await Wallet.findOne({ where: { email: emailEncrypt } });
+    const verifyCedula = await Wallet.findOne({ where: { cedula: cedulaEncrypt } });
 
     if (verifyEmail) {
       throw new Error(
@@ -82,7 +107,7 @@ class WalletService {
     return response;
   } */
 
-  async emailCreateNickname(code: string, email: string, nickname: string) {
+  /* async emailCreateNickname(code: string, email: string, nickname: string) {
     try {
       await this.verifyCode(code, email);
 
@@ -100,7 +125,7 @@ class WalletService {
     } catch (err: any) {
       throw new Error(err.toString());
     }
-  }
+  } */
 
   async createNickname(nickname: string, email: string, cedula: string) {
 
@@ -108,6 +133,7 @@ class WalletService {
 
     return result;
   }
+
 
   async updateWalleData(email: string, cedula: string, name: string, walletname: string) {
 
@@ -117,7 +143,8 @@ class WalletService {
   }
 
   async verifyWalletName(walletname: string) {
-    const wallet = await Wallet.findOne({ where: { walletname } });
+    const walletNameEncrypt = encryp.encryp(walletname);
+    const wallet = await Wallet.findOne({ where: { walletname: walletNameEncrypt } });
 
     if (wallet) {
       return wallet;

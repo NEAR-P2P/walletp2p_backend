@@ -273,9 +273,10 @@ async function parseFromSeedPhrase(seedPhrase: string) {
 
 
 async function createNickname(nickname: string, email: string, cedula: string) {
-  try {
+  const emailLowerCase = email.trim().toLocaleLowerCase();
 
-    await PreRegistration.update({ email: email }, { proccess: true });
+  try {  
+    await PreRegistration.update({ email: emailLowerCase }, { proccess: true });
 
     const privateKey = process.env.CREATE_NICKNAME_PRIVATEKEY;
     const address =  process.env.CREATE_NICKNAME_ADDRESS;
@@ -318,11 +319,15 @@ async function createNickname(nickname: string, email: string, cedula: string) {
       };
 
       try {
+        const nickNameEncrypt = encryp.encryp(nickname);
+        const emailEncrypt = encryp.encryp(emailLowerCase);
+        const cedulaEncrypt = encryp.encryp(cedula);
+
         const createWallet = new Wallet();
-        createWallet.email = email.toLowerCase();
-        createWallet.walletname = nickname
+        createWallet.email = emailEncrypt;
+        createWallet.walletname = nickNameEncrypt
         createWallet.nickname = true;
-        createWallet.cedula = cedula;
+        createWallet.cedula = cedulaEncrypt;
         
         await createWallet.save();
       } catch (error) {
@@ -330,7 +335,7 @@ async function createNickname(nickname: string, email: string, cedula: string) {
       }
 
       try {
-        await PreRegistration.update({ email: email }, { registered: true});
+        await PreRegistration.update({ email: emailLowerCase }, { registered: true});
       } catch (error) {
         console.log("update preRegistro: ", error)   
       }
@@ -338,39 +343,48 @@ async function createNickname(nickname: string, email: string, cedula: string) {
       return result;
 
     } else {
-      await PreRegistration.update({ email: email }, { proccess: false });
+      await PreRegistration.update({ email: emailLowerCase }, { proccess: false });
       throw new Error ("Error: " + response2.receipts_outcome[1].outcome.status.Failure.toString())
     }
   } catch (error) {
-    await PreRegistration.update({ email: email }, { proccess: false });
+    await PreRegistration.update({ email: emailLowerCase }, { proccess: false });
     throw new Error ("Error al crear nickname: " + error)
   }
 }
 
 async function verifyAndUpdateOrInsert(email: string, cedula: string, name: string, walletname: string) {
+  const emailLowerCase = email.trim().toLocaleLowerCase();
+  
   if (!cedula) {
     throw new Error('Cedula is required');
   }
+  
+  const nickNameEncrypt = encryp.encryp(walletname);
+  const emailEncrypt = encryp.encryp(emailLowerCase);
+  const nameEncrypt = encryp.encryp(name);
+  const cedulaEncrypt = encryp.encryp(cedula);
+  
   // console.log(`Searching for wallet with cedula: ${cedula}`);
-  let wallet = await Wallet.findOne({where: {email: email.trim()}});
+  let wallet = await Wallet.findOne({where: {email: emailEncrypt}});
   // console.log('wallet', wallet)
+
   if (wallet) {
     console.log('Actualizando wallet')
     // If email exists, update cedula and name
-    wallet.email = email;
-    wallet.cedula = cedula;
-    wallet.name = name;
-    wallet.walletname = walletname;
+    wallet.email = emailEncrypt;
+    wallet.cedula = cedulaEncrypt;
+    wallet.name = nameEncrypt;
+    wallet.walletname = nickNameEncrypt;
     await wallet.save();
   } else {
     // If wallet doesn't exist, insert new record
     wallet = new Wallet();
-    wallet.email = email;
+    wallet.email = emailEncrypt;
     wallet.creation_date = new Date();
     wallet.nickname = false;
-    wallet.cedula = cedula;
-    wallet.name = name;
-    wallet.walletname = walletname;
+    wallet.cedula = cedulaEncrypt;
+    wallet.name = nameEncrypt;
+    wallet.walletname = nickNameEncrypt;
   }
     await wallet.save();
   return wallet;

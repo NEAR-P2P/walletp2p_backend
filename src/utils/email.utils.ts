@@ -3,6 +3,7 @@ import { Wallet } from "../entities/wallets.entity";
 import { OtpList } from "../entities/otp.entity";
 const otpGenerator = require("otp-generator");
 import { PreRegistration } from "../entities/preRegistration.entity";
+import encryp from "./encryp";
 
 const sendCode = async (email: string, cedula: string, ip: string) => {
   const otp = otpGenerator.generate(4, {
@@ -12,7 +13,10 @@ const sendCode = async (email: string, cedula: string, ip: string) => {
   });
   let userRegister = false;
 
-  await Wallet.findOneBy({ email: email }).then(() => {
+  const emailLowerCase = email.trim().toLocaleLowerCase();
+  const emailEncrypt = encryp.encryp(emailLowerCase);
+
+  await Wallet.findOneBy({ email: emailEncrypt }).then(() => {
     userRegister = true;
   });
 
@@ -20,16 +24,16 @@ const sendCode = async (email: string, cedula: string, ip: string) => {
   
   // if(verifyPreRegistrationIp?.ip) throw new Error("Ud. Ya tiene una wallet registrada");
 
-  const verifyPreRegistration = await PreRegistration.findOneBy({ email: email });
+  const verifyPreRegistration = await PreRegistration.findOneBy({ email: emailLowerCase });
 
   if(verifyPreRegistration) {
     if(verifyPreRegistration.proccess || verifyPreRegistration.registered) throw new Error("El email ya ha sido registrado");
     
-    await PreRegistration.update({ email: email }, { cedula: cedula, ip: ip, validOtp: false});
+    await PreRegistration.update({ email: emailLowerCase }, { cedula: cedula, ip: ip, validOtp: false});
   } else {
     const createPreRegistration = new PreRegistration();
     createPreRegistration.cedula = cedula;
-    createPreRegistration.email = email.toLocaleLowerCase();
+    createPreRegistration.email = emailLowerCase;
     createPreRegistration.ip = ip;
 
     const createPreRegistrationSave = await createPreRegistration.save();
@@ -37,12 +41,12 @@ const sendCode = async (email: string, cedula: string, ip: string) => {
     if (!createPreRegistrationSave) throw new Error("Error al generar pre registro");
   }
 
-  await OtpList.findOne({ where: { email: email } }).then(() => {
-    OtpList.delete({ email: email });
+  await OtpList.findOne({ where: { email: emailLowerCase } }).then(() => {
+    OtpList.delete({ email: emailLowerCase });
   });
 
   const otpList = new OtpList();
-  otpList.email = email.toLocaleLowerCase();
+  otpList.email =emailLowerCase;
   otpList.code = otp;
 
   const save = await otpList.save();
@@ -54,20 +58,22 @@ const sendCode = async (email: string, cedula: string, ip: string) => {
     //from: '"verificación 👻" <developer@dvconsultores.com>', // sender address
     //from: '"verificación" <hrpmdevelop@gmail.com>', // sender address
     from: (network == "testnet" ? '"verificación" <hrpmdevelop@gmail.com>' : '"verificación" <developer@dvconsultores.com>'), // sender address
-    to: email, // list of receivers
+    to: emailLowerCase, // list of receivers
     subject: "Codigo de verificación Hello ✔", // Subject line
     text: "Codigo de verificación", // plain text body
     html: "<p>Su codigo es: <b>" + otp + "</b> </p>", // html body
   });
 
 
-  return { userRegister: userRegister };
+  return { userRegister };
 };
 
 
 
 const verifyCode = async (code: string, email: string) => {
-  const optlist = await OtpList.findOne({ where: { email: email } });
+  const emailLowerCase = email.trim().toLocaleLowerCase();
+
+  const optlist = await OtpList.findOne({ where: { email: emailLowerCase } });
 
   if (!optlist)
     throw new Error(
@@ -83,7 +89,7 @@ const verifyCode = async (code: string, email: string) => {
       throw new Error("Su codigo ha caducado, solicite un nuevo codigo");
     }
 
-    await PreRegistration.update({ email: email }, { validOtp: true });
+    await PreRegistration.update({ email: emailLowerCase }, { validOtp: true });
 
     return true;
   } else {
