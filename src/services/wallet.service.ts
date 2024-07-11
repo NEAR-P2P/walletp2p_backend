@@ -5,13 +5,57 @@ import emailUtils from "../utils/email.utils";
 import encryp from "../utils/encryp";
 import { configNear } from "../config/nearConfig";
 import { Not, In } from "typeorm"
+import { PreRegistration } from "../entities/preRegistration.entity";
 // const myContractWasm  = require("../services/code/metadao_dao.wasm");
 
 
 //funcion de delay
-/* function delay(ms: number) {
+function delay(ms: number) {
   return new Promise( resolve => setTimeout(resolve, ms) );
-} */
+}
+
+//funcion buscar email encryptado en la base de datos
+async function searchEmail(email: string) {
+  await delay(3000);
+  const emailEncrypt = encryp.encryp(email);
+  const preRegistro = await PreRegistration.find({ where: { email: email } });
+  const wallet = await Wallet.findOne({ where: { email: emailEncrypt } });
+  
+
+  console.log("---------------------------------------------")
+  console.log("Pre-registro:")
+  console.log(preRegistro)
+  console.log("Wallet:")
+  console.log(wallet)
+  console.log("---------------------------------------------")
+}
+
+//searchEmail("hrpmicarelli@gmail.com")
+
+// funcion para eliminar registro de pre-registro y wallet usando el email
+async function deleteEmail(email: string) {
+  await delay(3000);
+  const emailEncrypt = encryp.encryp(email);
+  const preRegistro = await PreRegistration.findOne({ where: { email: email } });
+  const wallet = await Wallet.findOne({ where: { email: emailEncrypt } });
+
+  if (preRegistro) {
+    await PreRegistration.remove(preRegistro);
+  }
+
+  if (wallet) {
+    await Wallet.remove(wallet);
+  }
+
+  console.log("---------------------------------------------")
+  console.log("Pre-registro:")
+  console.log(preRegistro)
+  console.log("Wallet:")
+  console.log(wallet)
+  console.log("---------------------------------------------")
+}
+
+// deleteEmail("hrpmicarelli@gmail.com")
 
 /*async function encryptBD() {
   console.log("---------------------------------------------")
@@ -175,9 +219,7 @@ class WalletService {
 
 }
 
-function delay(ms: number) {
-  return new Promise( resolve => setTimeout(resolve, ms) );
-}
+
 
 /* async function algo() {
  await delay(3000);
