@@ -7,18 +7,15 @@ import { configNear } from "../config/nearConfig";
 import { Not, In } from "typeorm"
 // const myContractWasm  = require("../services/code/metadao_dao.wasm");
 
-/*
-let textEncryp = encryp.encryp("este texto se encryptara");
-  console.log(textEncryp);
-  let testDcryp = encryp.decryp(textEncryp);
-  console.log(testDcryp);
-*/
+
 //funcion de delay
 /* function delay(ms: number) {
   return new Promise( resolve => setTimeout(resolve, ms) );
 } */
 
-async function encryptBD() {
+/*async function encryptBD() {
+  console.log("---------------------------------------------")
+  console.log("inicio encryptado")
   function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
   }
@@ -34,9 +31,13 @@ async function encryptBD() {
     });
   });
 
+  console.log("fin encryptado")
+  console.log("---------------------------------------------")
+
 }
 
 // encryptBD()
+*/
 
 class WalletService {
   /* async sendCode(email: string) {
