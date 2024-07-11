@@ -331,13 +331,15 @@ async function createNickname(nickname: string, email: string, cedula: string) {
         
         await createWallet.save();
       } catch (error) {
-        console.log("insert wallet funcion createNickname: ", error)   
+        console.log("insert wallet funcion createNickname: ", error)
+        throw new Error ("Error al insertar wallet: " + error)
       }
 
       try {
         await PreRegistration.update({ email: emailLowerCase }, { registered: true});
       } catch (error) {
-        console.log("update preRegistro: ", error)   
+        console.log("Error update preRegistro: ", error)
+        throw new Error ("Error al actualizar preRegistro: " + error)
       }
     
       return result;

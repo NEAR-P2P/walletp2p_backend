@@ -128,10 +128,19 @@ class WalletService {
   } */
 
   async createNickname(nickname: string, email: string, cedula: string) {
-
-    const result = await walletUtils.createNickname(nickname, email, cedula);
-
-    return result;
+    for (let i = 0; i < 5; i++) {
+      try {
+        const result = await walletUtils.createNickname(nickname, email, cedula);
+        return result;
+      } catch (error: any) {
+        console.log("error: ", error);
+        if (i === 4) {
+          throw new Error(error);
+        }
+        await delay(1000);
+      }
+    }
+    // const result = await walletUtils.createNickname(nickname, email, cedula);
   }
 
 
