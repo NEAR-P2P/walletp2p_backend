@@ -131,7 +131,7 @@ const createNickname = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.log(error)
     let statusCode = error.message.split("-").length > 0 ? Number(error.message.split("-")[0]) ? Number(error.message.split("-")[0]) : 500 : 500;
-    res.status(statusCode).send(error.message);
+    res.status(statusCode).send(error?.message || error);
   }
 };
 
