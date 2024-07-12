@@ -57,7 +57,7 @@ async function deleteEmail(email: string) {
 
 // deleteEmail("hrpmicarelli@gmail.com")
 
-/*async function encryptBD() {
+async function encryptBD() {
   console.log("---------------------------------------------")
   console.log("inicio encryptado")
   function delay(ms: number) {
@@ -66,11 +66,12 @@ async function deleteEmail(email: string) {
   await delay(5000);
   Wallet.find().then((wallets) => {
     wallets.forEach(async (element) => {
+      console.log("element: ", element)
       await Wallet.update({ id: element.id }, { 
-        email: encryp.encryp(element.email),
-        cedula: encryp.encryp(element.cedula),
-        name: encryp.encryp(element.name), 
-        walletname: encryp.encryp(element.walletname) 
+        email: encryp.encrypDES(element.email),
+        cedula: encryp.encrypDES(element.cedula),
+        name: encryp.encrypDES(element.name),
+        walletname: encryp.encrypDES(element.walletname)
       });
     });
   });
@@ -81,7 +82,8 @@ async function deleteEmail(email: string) {
 }
 
 // encryptBD()
-*/
+
+// decryptBD()
 
 class WalletService {
   /* async sendCode(email: string) {
@@ -197,11 +199,66 @@ class WalletService {
   }
 
   async verifyWalletName(walletname: string) {
+    await delay(3000);
     const walletNameEncrypt = encryp.encryp(walletname);
     const wallet = await Wallet.findOne({ where: { walletname: walletNameEncrypt } });
-
+    
     if (wallet) {
       return wallet;
+    } else {
+      return {};
+    }
+  }
+
+  //funcion consultar wallet desencryptando la informacion
+  async verifyWallet(walletname: string) {
+    await delay(3000);
+    const walletNameEncrypt = encryp.encrypDES(walletname);
+    const wallet = await Wallet.find();
+
+    if (wallet) {
+      const walletData = wallet.map((element) => {
+        try {
+          return {
+            email2: element.email,
+            email: encryp.decryp(element.email),
+            cedula: encryp.decryp(element.cedula),
+            name: element?.name ? encryp.decryp(element.name) : "",
+            walletname: element?.walletname ? encryp.decryp(element.walletname) : ""
+          }  
+        } catch (error) {
+          return {
+            email2: element.email,
+            email: element.email,
+          }
+        }
+        
+      })
+      
+      const emailOccurrences = walletData.reduce((acc:any, curr:any) => {
+        if (curr.email in acc) {
+          acc[curr.email]++;
+        } else {
+          acc[curr.email] = 1;
+        }
+        return acc;
+      }, {});
+      
+      // Filtrar el objeto para encontrar los correos electrónicos que aparecen más de una vez
+      const duplicateEmails = Object.keys(emailOccurrences).filter(email => emailOccurrences[email] > 1);
+      
+      console.log('Duplicate emails:', duplicateEmails);
+
+
+      const dataUser = walletData.filter((element) => ['igabcm@gmail.com',
+      'johanjesusrivero@gmail.com',
+      'jhondeibis58@gmail.com',
+      'mariaparisproduccion@gmail.com'].includes(element.email))
+      // console.log("walletData: ", walletData)
+      console.log("dataUser: ", dataUser)
+      // console.log("wallet: ", walletNameEncrypt, encryp.decrypDES(walletNameEncrypt))
+      //console.log("wallet: ", encryp.encryp(dataUser?.walletname))
+      return walletData;
     } else {
       return {};
     }
@@ -218,6 +275,8 @@ class WalletService {
   }
 
 }
+
+/// WalletService.prototype.verifyWallet("hrpmicarelli@gmail.com") // ("andresdom.near") 
 
 
 
