@@ -202,7 +202,7 @@ class WalletService {
     await delay(3000);
     const walletNameEncrypt = encryp.encryp(walletname);
     const wallet = await Wallet.findOne({ where: { walletname: walletNameEncrypt } });
-    
+    // console.log("wallet: ", walletNameEncrypt, wallet)
     if (wallet) {
       return wallet;
     } else {
@@ -276,7 +276,7 @@ class WalletService {
 
 }
 
-/// WalletService.prototype.verifyWallet("hrpmicarelli@gmail.com") // ("andresdom.near") 
+// WalletService.prototype.verifyWalletName("andresdom.near") // ("andresdom.near") 
 
 
 
