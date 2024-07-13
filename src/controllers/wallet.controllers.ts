@@ -111,19 +111,17 @@ const createNickname = async (req: Request, res: Response) => {
   try {
     const {nickname, email, cedula} = req.body;
 
-    if( !["gmail.com", "dvconsultores.com", "metademocracia.social"].includes(email.toLowerCase().split("@")[1]) ) throw new Error("400 - solo se permiten correos GMAIL");
+    const emailLowerCase = email.trim().toLowerCase();
 
-    const verifyPreRegistrationIp = await PreRegistration.findOneBy({ ip: req.ip, registered: true });
-  
-    if(verifyPreRegistrationIp?.ip) throw new Error("Ud. Ya tiene una wallet registrada");
+    if( !["gmail.com", "dvconsultores.com", "metademocracia.social"].includes(emailLowerCase.split("@")[1]) ) throw new Error("400 - solo se permiten correos GMAIL");
 
-    const verifyPreRegistration = await PreRegistration.findOneBy({ email: email });
-    if(!verifyPreRegistration) throw new Error("Error: No existe pre registro");
-    if(verifyPreRegistration.proccess || verifyPreRegistration.registered) throw new Error("Error: El email ya ha sido registrado");
-    if(verifyPreRegistration.ip != req.ip) throw new Error("Error: La direccion ip no coincide con la registrada al validar el codigo OTP");
+    // const verifyPreRegistrationIp = await PreRegistration.findOneBy({ ip: req.ip, registered: true });
+    // if(verifyPreRegistrationIp?.ip) throw new Error("Ud. Ya tiene una wallet registrada");
 
-    
-    
+    const verifyPreRegistration = await PreRegistration.findOneBy({ email: emailLowerCase });
+    if(!verifyPreRegistration) throw new Error("400 - Error: No existe pre registro");
+    if(verifyPreRegistration.proccess || verifyPreRegistration.registered) throw new Error("400 - Error: El email ya ha sido registrado");
+    // if(verifyPreRegistration.ip != req.ip) throw new Error("400 - Error: La direccion ip no coincide con la registrada al validar el codigo OTP");
 
     res.send({
       data: await service.createNickname(nickname, email, cedula)

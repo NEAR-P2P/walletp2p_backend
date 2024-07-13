@@ -11,14 +11,14 @@ const sendCode = async (email: string, cedula: string, ip: string) => {
     upperCaseAlphabets: false,
     specialChars: false,
   });
-  let userRegister = false;
+  const userRegister = false;
 
   const emailLowerCase = email.trim().toLocaleLowerCase();
-  const emailEncrypt = encryp.encryp(emailLowerCase);
+  // const emailEncrypt = encryp.encryp(emailLowerCase);
 
-  await Wallet.findOneBy({ email: emailEncrypt }).then(() => {
+  /* await Wallet.findOneBy({ email: emailEncrypt }).then(() => {
     userRegister = true;
-  });
+  }); */
 
   // const verifyPreRegistrationIp = await PreRegistration.findOneBy({ ip: ip, registered: true });
   
@@ -71,7 +71,7 @@ const sendCode = async (email: string, cedula: string, ip: string) => {
 
 
 const verifyCode = async (code: string, email: string) => {
-  const emailLowerCase = email.trim().toLocaleLowerCase();
+  const emailLowerCase = email.trim().toLowerCase();
 
   const optlist = await OtpList.findOne({ where: { email: emailLowerCase } });
 

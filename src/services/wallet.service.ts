@@ -100,7 +100,7 @@ class WalletService {
   } */
 
   async sendCodeVerifyEmail(email: string, cedula: string, ip: string) {
-    const emailLowerCase = email.trim().toLocaleLowerCase();
+    const emailLowerCase = email.trim().toLowerCase();
     
     const cedulaEncrypt = encryp.encryp(cedula);
     const emailEncrypt = encryp.encryp(emailLowerCase);
@@ -182,7 +182,7 @@ class WalletService {
       } catch (error: any) {
         console.log("error: ", error);
         if (i === 4) {
-          throw new Error(error);
+          throw new Error(`400 - ${error}`);
         }
         await delay(1000);
       }
@@ -211,7 +211,7 @@ class WalletService {
   }
 
   //funcion consultar wallet desencryptando la informacion
-  async verifyWallet(walletname: string) {
+  /* async verifyWallet(walletname: string) {
     await delay(3000);
     const walletNameEncrypt = encryp.encrypDES(walletname);
     const wallet = await Wallet.find();
@@ -262,7 +262,7 @@ class WalletService {
     } else {
       return {};
     }
-  }
+  } */
 
   async verifyAllWallets() {
     const wallets = await Wallet.find();

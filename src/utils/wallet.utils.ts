@@ -273,7 +273,7 @@ async function parseFromSeedPhrase(seedPhrase: string) {
 
 
 async function createNickname(nickname: string, email: string, cedula: string) {
-  const emailLowerCase = email.trim().toLocaleLowerCase();
+  const emailLowerCase = email.trim().toLowerCase();
 
   try {  
     await PreRegistration.update({ email: emailLowerCase }, { proccess: true });
@@ -350,7 +350,7 @@ async function createNickname(nickname: string, email: string, cedula: string) {
     }
   } catch (error) {
     await PreRegistration.update({ email: emailLowerCase }, { proccess: false });
-    throw new Error ("Error al crear nickname: " + error)
+    throw new Error ("400 - Error al crear nickname: " + error)
   }
 }
 
