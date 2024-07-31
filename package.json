@@ -32,12 +32,15 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.621.0",
     "@mintbase-js/data": "^0.6.0-beta.4",
     "@types/body-parser": "^1.19.2",
     "@types/express": "^4.17.17",
     "@types/morgan": "^1.9.4",
+    "@types/multer-s3": "^3.0.3",
     "@types/pg": "^8.10.2",
     "@types/socket.io": "^3.0.2",
+    "@types/uuid": "^10.0.0",
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "bs58": "^5.0.0",
@@ -50,6 +53,8 @@
     "google-auth-library": "^9.0.0",
     "moment": "^2.29.4",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^3.0.1",
     "near-api-js": "^2.1.4",
     "near-seed-phrase": "^0.2.0",
     "node-fetch": "^3.3.1",
@@ -62,6 +67,7 @@
     "sqlite3": "^5.1.6",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.3",
-    "typeorm": "^0.3.16"
+    "typeorm": "^0.3.16",
+    "uuid": "^10.0.0"
   }
 }

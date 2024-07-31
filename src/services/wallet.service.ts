@@ -35,8 +35,10 @@ async function searchEmail(email: string) {
 // funcion para eliminar registro de pre-registro y wallet usando el email
 async function deleteEmail(email: string) {
   await delay(3000);
-  const emailEncrypt = encryp.encryp(email);
-  const preRegistro = await PreRegistration.findOne({ where: { email: email } });
+  const emailLowerCase = email.trim().toLowerCase();
+  // const emailLowerCase = email; 
+  const emailEncrypt = encryp.encryp(emailLowerCase);
+  const preRegistro = await PreRegistration.findOne({ where: { email: emailLowerCase } });
   const wallet = await Wallet.findOne({ where: { email: emailEncrypt } });
 
   if (preRegistro) {
@@ -44,7 +46,8 @@ async function deleteEmail(email: string) {
   }
 
   if (wallet) {
-    await Wallet.remove(wallet);
+    const deleteUser = await Wallet.remove(wallet);
+    console.log("delete: ", deleteUser)
   }
 
   console.log("---------------------------------------------")
@@ -55,7 +58,37 @@ async function deleteEmail(email: string) {
   console.log("---------------------------------------------")
 }
 
-// deleteEmail("hrpmicarelli@gmail.com")
+// deleteEmail("Ginoproduccion2029@gmail.com")
+
+async function deleteCedula(cedula: string) {
+  await delay(3000);
+  
+  const cedulaEncrypt = encryp.encryp(cedula);
+  const preRegistro = await PreRegistration.findOne({ where: { cedula: cedula } });
+  const wallet = await Wallet.findOne({ where: { cedula: cedulaEncrypt } });
+
+  if (preRegistro) {
+    await PreRegistration.remove(preRegistro);
+  }
+
+  if (wallet) {
+    const deleteUser = await Wallet.remove(wallet);
+    console.log("delete: ", deleteUser)
+  }
+
+
+  console.log("---------------------------------------------")
+  console.log("Pre-registro:")
+  console.log(preRegistro)
+  console.log("Wallet:")
+  console.log(wallet)
+  console.log("---------------------------------------------")
+}
+
+// deleteCedula("13805996")
+
+
+// 8081939   8709360 20217750
 
 async function encryptBD() {
   console.log("---------------------------------------------")
