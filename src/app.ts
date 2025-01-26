@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 //app.use(morgan("dev"));
 
 if(process.env.NETWORK === "mainnet"){
-  const allowedOrigins = ["https://mi.arepa.digital", 'https://testnet.arepa.digital', 'https://dao.metademocracia.social','https://dao.arepa.digital'];
+  const allowedOrigins = ["https://mi.arepa.digital", 'https://testnet.arepa.digital', 'https://dao.metademocracia.social', 'https://nearp2p.com'];
   app.use(cors({
     origin: function(origin, callback){
       // Allow requests with no origin (like mobile apps or curl requests)
