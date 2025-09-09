@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 //app.use(morgan("dev"));
 
 if(process.env.NETWORK === "mainnet"){
-  const allowedOrigins = ["https://mi.arepa.digital", 'https://testnet.arepa.digital', 'https://dao.metademocracia.social', 'https://nearp2p.com'];
+  const allowedOrigins = ["*"];
   app.use(cors({
     origin: function(origin, callback){
       // Allow requests with no origin (like mobile apps or curl requests)
@@ -56,22 +56,22 @@ app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSetup));
 
 // credenciales ssl
 let server
-if (process.env.NODE_ENV === "production") {
-  const privateKey = fs.readFileSync("/etc/letsencrypt/live/musicfeast.io/privkey.pem", "utf8");
-  const certificate = fs.readFileSync("/etc/letsencrypt/live/musicfeast.io/cert.pem", "utf8");
-  const ca = fs.readFileSync("/etc/letsencrypt/live/musicfeast.io/chain.pem", "utf8");
+// if (process.env.NODE_ENV === "production") {
+//   const privateKey = fs.readFileSync("/etc/letsencrypt/live/musicfeast.io/privkey.pem", "utf8");
+//   const certificate = fs.readFileSync("/etc/letsencrypt/live/musicfeast.io/cert.pem", "utf8");
+//   const ca = fs.readFileSync("/etc/letsencrypt/live/musicfeast.io/chain.pem", "utf8");
 
-  const credentials = {
-    key: privateKey,
-    cert: certificate,
-    ca: ca,
-  };
-  server = https.createServer(credentials, app);
-  console.log("htpps");
-} else {
-  server = http.createServer(app);
-  console.log("htpp");
-}
+//   const credentials = {
+//     key: privateKey,
+//     cert: certificate,
+//     ca: ca,
+//   };
+//   server = https.createServer(credentials, app);
+//   console.log("htpps");
+// } else {
+server = http.createServer(app);
+//  console.log("htpp");
+//}
 
 server.listen(port, () => {
   return console.log(`server is listening on ${port} - ${process.env.PROTOCOL}${process.env.HOST}:${process.env.PORT}${process.env.RUTA}/`);
