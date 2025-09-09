@@ -9,6 +9,9 @@ const AppDataSource = new DataSource({
   username: process.env.USER_ORM,
   password: process.env.PASSWORD_ORM,
   database: process.env.DATABASE_ORM,
+  ssl: {
+    rejectUnauthorized: false,
+  },
   synchronize: false,
   logging: false,
   entities: [path.join(__dirname, "../entities/*.entity.{js,ts}")],
