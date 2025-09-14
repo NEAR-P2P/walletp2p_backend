@@ -31,22 +31,7 @@ app.use(bodyParser.json({ limit: '50mb', type: 'application/json' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 //app.use(morgan("dev"));
 
-if(process.env.NETWORK === "mainnet"){
-  const allowedOrigins = ["*"];
-  app.use(cors({
-    origin: function(origin, callback){
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if(!origin) return callback(null, true);
-      if(allowedOrigins.indexOf(origin) === -1){
-        var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    }
-  }));
-} else {
-  app.use(cors());
-}
+app.use(cors());
 app.use(express.json());
 
 
