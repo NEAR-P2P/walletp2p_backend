@@ -5,8 +5,8 @@ import { S3Client } from "@aws-sdk/client-s3";
 import multerS3 from "multer-s3";
 
 const s3Config = new S3Client({
-    endpoint: "https://nyc3.digitaloceanspaces.com",
-    region: "us-east-1",
+    endpoint: "https://fra1.digitaloceanspaces.com",
+    region: "fra1",
     credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
