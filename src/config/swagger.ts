@@ -27,10 +27,10 @@ const swaggerDefinition: OAS3Definition = {
   },
   servers: [
     {
-      url: "https://localhost:3000/wallet-near/",
+      url: "https://localhost:3000/wallet-p2p/",
     },
     {
-      url: "http://localhost:3000/wallet-near/",
+      url: "http://localhost:3000/wallet-p2p/",
     },
   ],
   tags: [

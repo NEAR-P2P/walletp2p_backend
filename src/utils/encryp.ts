@@ -18,6 +18,7 @@ function encryp(data: string){
     mode: CryptoJS.mode.ECB,
     padding: CryptoJS.pad.Pkcs7
   });
+  console.log(encrypted.toString());
   return encrypted.toString();
 }
 
@@ -30,6 +31,8 @@ function decryp(data: string){
   return decrypted.toString(CryptoJS.enc.Utf8);
 }
 
+// CLAVE="apfjWBNETSXsRWPl6QiMaEOFRMxbXbQO" npx ts-node src/utils/encryp.ts
+// encryp("domgarmining@gmail.com");
 
 export default {
   encryp,
