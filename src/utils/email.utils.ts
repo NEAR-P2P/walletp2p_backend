@@ -57,7 +57,7 @@ const sendCode = async (email: string, cedula: string, ip: string) => {
   await transporter.sendMail({
     //from: '"verificación 👻" <developer@dvconsultores.com>', // sender address
     //from: '"verificación" <hrpmdevelop@gmail.com>', // sender address
-    from: (network == "testnet" ? '"verificación" <hrpmdevelop@gmail.com>' : '"verificación" <developer@dvconsultores.com>'), // sender address
+    from: (network == "testnet" ? '"verificación" <hrpmdevelop@gmail.com>' : '"verificación" <info@metademocracia.social>'), // sender address
     to: emailLowerCase, // list of receivers
     subject: "Codigo de verificación Hello ✔", // Subject line
     text: "Codigo de verificación", // plain text body
